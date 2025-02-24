@@ -1,0 +1,34 @@
+{
+  "navigation": {
+    "articles": "Articles",
+    "journals": "Journals",
+    "authors": "Authors",
+    "resources": "Resources"
+  },
+  "common": {
+    "submitPaper": "Submit Paper",
+    "browseArticles": "Browse Articles",
+    "submitResearch": "Submit Research",
+    "footer": "© 2024 SciPublish. Advancing scientific knowledge through collaboration."
+  },
+  "home": {
+    "title": "Advancing Research Through Collaboration",
+    "description": "A comprehensive platform for research teams to publish, collaborate, and advance scientific knowledge. Streamline your publication process with our integrated tools and expert review system.",
+    "featuresTitle": "Publication Features",
+    "features": [
+      {
+        "title": "Peer Review System",
+        "description": "Robust double-blind peer review process with expert reviewers across multiple disciplines"
+      },
+      {
+        "title": "Citation Management",
+        "description": "Integrated citation tools supporting multiple formats (APA, MLA, Chicago) with automatic formatting"
+      },
+      {
+        "title": "Research Analytics",
+        "description": "Comprehensive analytics dashboard tracking citations, downloads, and research impact metrics"
+      }
+    ]
+  }
+}
+

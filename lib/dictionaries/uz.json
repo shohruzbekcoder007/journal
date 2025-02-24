@@ -1,0 +1,34 @@
+{
+  "navigation": {
+    "articles": "Maqolalar",
+    "journals": "Jurnallar",
+    "authors": "Mualliflar",
+    "resources": "Resurslar"
+  },
+  "common": {
+    "submitPaper": "Maqola yuborish",
+    "browseArticles": "Maqolalarni ko'rish",
+    "submitResearch": "Tadqiqot yuborish",
+    "footer": "© 2024 SciPublish. Hamkorlik orqali ilmiy bilimlarni rivojlantirish."
+  },
+  "home": {
+    "title": "Hamkorlik orqali tadqiqotlarni rivojlantirish",
+    "description": "Ilmiy guruhlar uchun nashr etish, hamkorlik qilish va ilmiy bilimlarni rivojlantirish uchun keng qamrovli platforma. Integratsiyalashgan vositalar va ekspert baholash tizimi yordamida nashr jarayonini optimallashing.",
+    "featuresTitle": "Nashr xususiyatlari",
+    "features": [
+      {
+        "title": "Ekspert baholash tizimi",
+        "description": "Turli sohalar bo'yicha ekspertlar bilan ikki tomonlama ko'r baholash jarayoni"
+      },
+      {
+        "title": "Iqtiboslarni boshqarish",
+        "description": "Turli formatlarni (APA, MLA, Chicago) qo'llab-quvvatlovchi integratsiyalashgan iqtibos vositalari"
+      },
+      {
+        "title": "Tadqiqot tahlili",
+        "description": "Iqtiboslar, yuklab olishlar va tadqiqot ta'siri ko'rsatkichlarini kuzatish uchun keng qamrovli tahlil paneli"
+      }
+    ]
+  }
+}
+
