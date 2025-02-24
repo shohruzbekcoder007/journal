@@ -1,8 +1,8 @@
 import { AdminArticlesTable } from "@/components/admin/articles-table"
+import { CreateArticleDialog } from "@/components/admin/create-article-dialog"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import { translations, type Language } from "@/lib/translations"
-import Link from "next/link"
+import { translations, type Language, type CreateArticleDialogTranslations } from "@/lib/translations"
 
 const articles = [
   {
@@ -25,17 +25,21 @@ const articles = [
 
 export default function AdminArticlesPage({ params: { lang } }: { params: { lang: Language } }) {
   const t = translations[lang]
+  const createArticleTranslations: CreateArticleDialogTranslations = t.admin.articles.create_p
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">{t.admin.articles.title}</h1>
-        <Link href={`/${lang}/admin/articles/new`}>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            {t.admin.articles.create}
-          </Button>
-        </Link>
+        <CreateArticleDialog
+          translations={createArticleTranslations}
+          trigger={
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              {createArticleTranslations.button}
+            </Button>
+          }
+        />
       </div>
       <AdminArticlesTable data={articles} translations={t.admin.articles} />
     </div>

@@ -35,11 +35,11 @@ function SidebarNav({ translations, mobile = false }: SidebarProps & { mobile?: 
       href: `/${lang}/admin`,
       icon: LayoutDashboard,
     },
-    {
-      title: translations.articles,
-      href: `/${lang}/admin/articles`,
-      icon: FileText,
-    },
+    // {
+    //   title: translations.articles,
+    //   href: `/${lang}/admin/articles`,
+    //   icon: FileText,
+    // },
     {
       title: translations.journals,
       href: `/${lang}/admin/journals`,
