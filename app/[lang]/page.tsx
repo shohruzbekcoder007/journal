@@ -28,30 +28,30 @@ export default function Home({ params: { lang } }: { params: { lang: Language } 
 
         <section className="space-y-6 py-8 md:py-12 lg:py-24">
           <div className="mx-auto max-w-[58rem] flex flex-col items-center space-y-4 text-center">
-            <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-6xl">{t.features.title}</h2>
+            <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-6xl">{t?.features?.title}</h2>
           </div>
           <div className="mx-auto max-w-[64rem] grid justify-center gap-4 sm:grid-cols-2 md:grid-cols-3">
             <div className="relative overflow-hidden rounded-lg border bg-background p-2">
               <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
                 <div className="space-y-2">
-                  <h3 className="font-bold">{t.features.peerReview.title}</h3>
-                  <p className="text-sm text-muted-foreground">{t.features.peerReview.description}</p>
+                  <h3 className="font-bold">{t?.features?.peerReview?.title}</h3>
+                  <p className="text-sm text-muted-foreground">{t?.features?.peerReview?.description}</p>
                 </div>
               </div>
             </div>
             <div className="relative overflow-hidden rounded-lg border bg-background p-2">
               <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
                 <div className="space-y-2">
-                  <h3 className="font-bold">{t.features.citation.title}</h3>
-                  <p className="text-sm text-muted-foreground">{t.features.citation.description}</p>
+                  <h3 className="font-bold">{t?.features?.citation?.title}</h3>
+                  <p className="text-sm text-muted-foreground">{t?.features?.citation?.description}</p>
                 </div>
               </div>
             </div>
             <div className="relative overflow-hidden rounded-lg border bg-background p-2">
               <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
                 <div className="space-y-2">
-                  <h3 className="font-bold">{t.features.analytics.title}</h3>
-                  <p className="text-sm text-muted-foreground">{t.features.analytics.description}</p>
+                  <h3 className="font-bold">{t?.features?.analytics?.title}</h3>
+                  <p className="text-sm text-muted-foreground">{t?.features?.analytics?.description}</p>
                 </div>
               </div>
             </div>

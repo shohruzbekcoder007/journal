@@ -1,8 +1,12 @@
-import { AdminAuthorsTable } from "@/components/admin/authors-table"
+import { ServerTable } from "@/components/server-table"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { translations, type Language } from "@/lib/translations"
+import { parseTableParams, processTableData } from "@/lib/table-utils"
 import Link from "next/link"
+import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 const authors = [
   {
@@ -25,8 +29,101 @@ const authors = [
   },
 ]
 
-export default function AdminAuthorsPage({ params: { lang } }: { params: { lang: Language } }) {
-  const t = translations[lang].admin.authors // Access the authors translations directly
+export default function AdminAuthorsPage({
+  params: { lang },
+  searchParams,
+}: {
+  params: { lang: Language }
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  const t = translations[lang].admin.authors
+  const tableParams = parseTableParams(new URLSearchParams(searchParams as Record<string, string>))
+
+  const { data, pageCount, currentPage } = processTableData(authors, tableParams, [
+    "name",
+    "institution",
+    "field",
+    "status",
+  ])
+
+  const columns = [
+    {
+      key: "name",
+      header: t.columns.name,
+      cell: (author: (typeof authors)[0]) => (
+        <div className="flex items-center gap-2">
+          <Avatar className="h-8 w-8">
+            <AvatarFallback>
+              {author.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </AvatarFallback>
+          </Avatar>
+          {author.name}
+        </div>
+      ),
+      sortable: true,
+    },
+    {
+      key: "institution",
+      header: t.columns.institution,
+      cell: (author: (typeof authors)[0]) => author.institution,
+      sortable: true,
+    },
+    {
+      key: "field",
+      header: t.columns.field,
+      cell: (author: (typeof authors)[0]) => author.field,
+      sortable: true,
+    },
+    {
+      key: "publications",
+      header: t.columns.publications,
+      cell: (author: (typeof authors)[0]) => author.publications,
+      sortable: true,
+    },
+    {
+      key: "status",
+      header: t.columns.status,
+      cell: (author: (typeof authors)[0]) => (
+        <Badge variant={author.status === "active" ? "default" : "secondary"}>{author.status}</Badge>
+      ),
+      sortable: true,
+    },
+    {
+      key: "createdAt",
+      header: t.columns.createdAt,
+      cell: (author: (typeof authors)[0]) => new Date(author.createdAt).toLocaleDateString(),
+      sortable: true,
+    },
+    {
+      key: "actions",
+      header: t.columns.actions,
+      cell: (author: (typeof authors)[0]) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <Link href={`/${lang}/admin/authors/${author.id}/edit`}>
+              <DropdownMenuItem>
+                <Pencil className="mr-2 h-4 w-4" />
+                {t.edit}
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem className="text-destructive">
+              <Trash className="mr-2 h-4 w-4" />
+              {t.delete}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ]
 
   return (
     <div className="space-y-6">
@@ -39,8 +136,16 @@ export default function AdminAuthorsPage({ params: { lang } }: { params: { lang:
           </Button>
         </Link>
       </div>
-      <AdminAuthorsTable data={authors} translations={t} />
+      <ServerTable
+        data={data}
+        columns={columns}
+        pageCount={pageCount}
+        currentPage={currentPage}
+        searchParams={tableParams}
+        searchPlaceholder={t.search}
+        noResultsMessage={t.noResults}
+        baseUrl={`/${lang}/admin/authors`}
+      />
     </div>
   )
 }
-

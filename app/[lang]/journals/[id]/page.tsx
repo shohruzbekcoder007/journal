@@ -1,5 +1,6 @@
-import { ArticlesTable } from "@/components/articles-table"
+import { ServerTable } from "@/components/server-table"
 import { translations, type Language } from "@/lib/translations"
+import { parseTableParams, processTableData } from "@/lib/table-utils"
 
 // Simulated article data - in real app, this would come from an API or database
 const articles = [
@@ -45,8 +46,44 @@ const articles = [
   },
 ]
 
-export default function ArticlesPage({ params: { lang } }: { params: { lang: Language } }) {
+export default function ArticlesPage({
+  params: { lang, id },
+  searchParams,
+}: {
+  params: { lang: Language, id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
   const t = translations[lang]
+  const tableParams = parseTableParams(new URLSearchParams(searchParams as Record<string, string>))
+
+  const { data, pageCount, currentPage } = processTableData(articles, tableParams, ["title", "authors", "category"])
+
+  const columns = [
+    {
+      key: "title",
+      header: t.articles.columns.title,
+      cell: (article: (typeof articles)[0]) => <div className="font-medium">{article.title}</div>,
+      sortable: true,
+    },
+    {
+      key: "authors",
+      header: t.articles.columns.authors,
+      cell: (article: (typeof articles)[0]) => article.authors,
+      sortable: true,
+    },
+    {
+      key: "category",
+      header: t.articles.columns.category,
+      cell: (article: (typeof articles)[0]) => article.category,
+      sortable: true,
+    },
+    {
+      key: "createdAt",
+      header: t.articles.columns.createdAt,
+      cell: (article: (typeof articles)[0]) => new Date(article.createdAt).toLocaleDateString(),
+      sortable: true,
+    },
+  ]
 
   return (
     <div className="container py-8">
@@ -54,7 +91,16 @@ export default function ArticlesPage({ params: { lang } }: { params: { lang: Lan
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight">{t.articles.title}</h1>
         </div>
-        <ArticlesTable data={articles} translations={t.articles} />
+        <ServerTable
+          data={data}
+          columns={columns}
+          pageCount={pageCount}
+          currentPage={currentPage}
+          searchParams={tableParams}
+          searchPlaceholder={t.articles.search}
+          noResultsMessage={t.articles.noResults}
+          baseUrl={`/${lang}/journals/${id}/`}
+        />
       </div>
     </div>
   )

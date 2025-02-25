@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum status {
+  active
+  inactive
+  pending
+}
+
 model User {
   email     String   @unique
   name      String?
@@ -14,4 +20,26 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   id        Int      @id @default(autoincrement())
+}
+
+model File {
+  name      String
+  path      String
+  createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  Author    Author?
+}
+
+model Author {
+  photoId           Int?    @unique
+  fullName          String
+  email             String  @unique
+  institution       String
+  researchField     String
+  publicationsCount Int
+  orcidId           String?
+  status            status  @default(active)
+  biography         String?
+  id                Int     @id @default(autoincrement())
+  photo             File?   @relation(fields: [photoId], references: [id])
 }

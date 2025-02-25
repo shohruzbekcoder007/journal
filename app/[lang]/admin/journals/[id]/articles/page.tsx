@@ -1,8 +1,12 @@
-import { AdminArticlesTable } from "@/components/admin/articles-table"
 import { CreateArticleDialog } from "@/components/admin/create-article-dialog"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
 import { translations, type Language, type CreateArticleDialogTranslations } from "@/lib/translations"
+import { ServerTable } from "@/components/server-table"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { parseTableParams, processTableData } from "@/lib/table-utils"
+import Link from "next/link"
+import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react"
 
 const articles = [
   {
@@ -23,9 +27,85 @@ const articles = [
   },
 ]
 
-export default function AdminArticlesPage({ params: { lang } }: { params: { lang: Language } }) {
+export default function AdminArticlesPage({
+  params: { lang, id },
+  searchParams,
+}: {
+  params: { lang: Language; id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+
   const t = translations[lang]
   const createArticleTranslations: CreateArticleDialogTranslations = t.admin.articles.create_p
+  const tableParams = parseTableParams(new URLSearchParams(searchParams as Record<string, string>))
+
+  const { data, pageCount, currentPage } = processTableData(articles, tableParams, [
+    "title",
+    "authors",
+    "category",
+    "status",
+  ])
+
+  const columns = [
+    {
+      key: "title",
+      header: t.admin.articles.columns.title,
+      cell: (article: (typeof articles)[0]) => article.title,
+      sortable: true,
+    },
+    {
+      key: "authors",
+      header: t.admin.articles.columns.authors,
+      cell: (article: (typeof articles)[0]) => article.authors,
+      sortable: true,
+    },
+    {
+      key: "category",
+      header: t.admin.articles.columns.category,
+      cell: (article: (typeof articles)[0]) => article.category,
+      sortable: true,
+    },
+    {
+      key: "status",
+      header: t.admin.articles.columns.status,
+      cell: (article: (typeof articles)[0]) => (
+        <Badge variant={article.status === "published" ? "default" : "secondary"}>{article.status}</Badge>
+      ),
+      sortable: true,
+    },
+    {
+      key: "createdAt",
+      header: t.admin.articles.columns.createdAt,
+      cell: (article: (typeof articles)[0]) => new Date(article.createdAt).toLocaleDateString(),
+      sortable: true,
+    },
+    {
+      key: "actions",
+      header: t.admin.articles.columns.actions,
+      cell: (article: (typeof articles)[0]) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <Link href={`/${lang}/admin/articles/${article.id}/edit`}>
+              <DropdownMenuItem>
+                <Pencil className="mr-2 h-4 w-4" />
+                {t.admin.articles.edit}
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem className="text-destructive">
+              <Trash className="mr-2 h-4 w-4" />
+              {t.admin.articles.delete}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ]
 
   return (
     <div className="space-y-6">
@@ -41,8 +121,18 @@ export default function AdminArticlesPage({ params: { lang } }: { params: { lang
           }
         />
       </div>
-      <AdminArticlesTable data={articles} translations={t.admin.articles} />
+      <ServerTable
+        data={data}
+        columns={columns}
+        pageCount={pageCount}
+        currentPage={currentPage}
+        searchParams={tableParams}
+        searchPlaceholder={t.admin.articles.search}
+        noResultsMessage={t.admin.articles.noResults}
+        baseUrl={`/${lang}/admin/journals/${id}/articles`}
+      />
     </div>
   )
 }
+
 
