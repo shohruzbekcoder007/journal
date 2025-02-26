@@ -7,6 +7,7 @@ import { parseTableParams, processTableData } from "@/lib/table-utils"
 import Link from "next/link"
 import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { getAuthors } from "@/app/actions/author"
 
 const authors = [
   {
@@ -29,7 +30,7 @@ const authors = [
   },
 ]
 
-export default function AdminAuthorsPage({
+export default async function AdminAuthorsPage({
   params: { lang },
   searchParams,
 }: {
@@ -38,6 +39,19 @@ export default function AdminAuthorsPage({
 }) {
   const t = translations[lang].admin.authors
   const tableParams = parseTableParams(new URLSearchParams(searchParams as Record<string, string>))
+
+  const authorList = await getAuthors()
+    const authors = authorList.map((author) => ({
+      id: author.id,
+      name: author.fullName,
+      institution: author.institution,
+      field: author.researchField,
+      publications: author.publicationsCount,
+      avatar: author.photo ? `http://localhost:3000${author.photo.path}` : "/placeholder.svg",
+      status: author.status,
+      createdAt: author.createdAt ? new Date(author.createdAt).toLocaleDateString() : "N/A",
+      updatedAt: author.updatedAt
+    }))
 
   const { data, pageCount, currentPage } = processTableData(authors, tableParams, [
     "name",
@@ -94,7 +108,7 @@ export default function AdminAuthorsPage({
     {
       key: "createdAt",
       header: t.columns.createdAt,
-      cell: (author: (typeof authors)[0]) => new Date(author.createdAt).toLocaleDateString(),
+      cell: (author: (typeof authors)[0]) => author.createdAt,
       sortable: true,
     },
     {

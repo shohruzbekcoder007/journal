@@ -9,7 +9,6 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Modern App",
   description: "A production-ready starter template built with Next.js, Supabase, and shadcn/ui",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -26,6 +25,3 @@ export default function RootLayout({
   )
 }
 
-
-
-import './globals.css'

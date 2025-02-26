@@ -2,8 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { randomUUID } from "crypto";
-import path from "path";
 import { writeFile } from "fs/promises";
+import path from "path";
 
 export type Author = {
     id: number;
@@ -31,16 +31,18 @@ export async function createAuthor(formData: FormData) {
         throw new Error("No file uploaded");
     }
 
+    let randomUUId = randomUUID();
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const filePath = path.join(process.cwd(), "public/uploads", randomUUID() + "-" + file.name);
+    const filePath = path.join(process.cwd(), "public/uploads", randomUUId + "-" + file.name);
 
     await writeFile(filePath, buffer);
 
     const savedFile = await prisma.file.create({
         data: {
             name: file.name,
-            path: `/uploads/${randomUUID() + "-" + file.name}`,
+            path: `/uploads/${randomUUId + "-" + file.name}`,
         },
     });
     if (!savedFile) {
@@ -70,7 +72,11 @@ export async function getAuthor(id: Author["id"]) {
 }
 
 export async function getAuthors() {
-    return prisma.author.findMany();
+    return prisma.author.findMany({
+        include: {
+            photo: true,
+        }
+    });
 }
 
 export async function updateAuthor(id: Author["id"], data: Omit<Partial<Author>, "id">) {

@@ -1,6 +1,7 @@
 import { translations } from "@/lib/translations"
 import type { Language } from "@/lib/translations"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getAuthors } from "@/app/actions/author"
 
 const authors = [
   {
@@ -29,8 +30,21 @@ const authors = [
   },
 ]
 
-export default function AuthorsPage({ params: { lang } }: { params: { lang: Language } }) {
+export default async function AuthorsPage({ params: { lang } }: { params: { lang: Language } }) {
   const t = translations[lang]
+
+  const authorList = await getAuthors()
+  const authors = authorList.map((author) => ({
+    id: author.id,
+    name: author.fullName,
+    institution: author.institution,
+    field: author.researchField,
+    publications: author.publicationsCount,
+    avatar: author.photo
+      // ? `${process.env.NEXT_PUBLIC_SERVER_HOST}${author.photo.path}`
+      ? `http://localhost:3000${author.photo.path}`
+      : "/placeholder.svg",
+  }))
 
   return (
     <div className="container py-8">

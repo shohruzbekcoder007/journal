@@ -1,6 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -12,7 +14,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "@/components/ui/use-toast"
-import { Loader2 } from "lucide-react"
+import { Loader2, File, Upload, X } from "lucide-react"
+import Image from "next/image"
+import { createJournal } from "@/app/actions/journal"
 
 // Create a schema for journal validation
 const journalSchema = z.object({
@@ -42,6 +46,23 @@ const journalSchema = z.object({
   status: z.enum(["active", "inactive", "pending"], {
     required_error: "Please select a status.",
   }),
+  file: z
+    .instanceof(FileList)
+    .optional()
+    .refine(
+      (files) => {
+        return (
+          !files ||
+          files.length === 0 ||
+          Array.from(files).every((file) =>
+            ["image/jpeg", "image/png", "image/jpg", "application/pdf"].includes(file.type),
+          )
+        )
+      },
+      {
+        message: "File must be an image (JPEG, PNG) or PDF document.",
+      },
+    ),
 })
 
 type JournalFormValues = z.infer<typeof journalSchema>
@@ -55,6 +76,7 @@ const defaultValues: Partial<JournalFormValues> = {
   description: "",
   publisher: "",
   status: "active",
+  // file is handled separately since it can't be initialized with a value
 }
 
 interface JournalFormProps {
@@ -73,6 +95,36 @@ export function JournalForm({ lang, initialData }: JournalFormProps) {
     defaultValues: initialData || defaultValues,
   })
 
+  // Add this ref inside the JournalForm component, before the return statement
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Add this state inside the JournalForm component, before the return statement
+  const [filePreview, setFilePreview] = useState<string | null>(null)
+
+  // Add this function inside the JournalForm component, before the return statement
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>, onChange: (...event: any[]) => void) {
+    if (e.target.files && e.target.files.length > 0) {
+      onChange(e.target.files)
+      const file = e.target.files[0]
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setFilePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    } else {
+      setFilePreview(null)
+    }
+  }
+
+  // Add this function inside the JournalForm component, before the return statement
+  function clearFile(onChange: (...event: any[]) => void) {
+    onChange(undefined)
+    setFilePreview(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
   // Handle form submission
   async function onSubmit(data: JournalFormValues) {
     setIsSubmitting(true)
@@ -81,17 +133,50 @@ export function JournalForm({ lang, initialData }: JournalFormProps) {
       // In a real application, this would be an API call
       console.log("Journal data:", data)
 
+      // Handle file upload
+      if (data.file && data.file.length > 0) {
+        const file = data.file[0]
+        console.log("File to upload:", file.name, file.type, file.size)
+        // In a real application, you would upload the file to a storage service
+        // For example:
+        // const formData = new FormData()
+        // formData.append('file', file)
+        // await fetch('/api/upload', { method: 'POST', body: formData })
+      }
+
+      const formData = new FormData()
+        Object.keys(data).forEach((key) => {
+          if (key === "file") {
+            if (data.file && data.file.length > 0) {
+              formData.append(key, data.file[0])
+            }
+          } else {
+            const value = data[key as keyof JournalFormValues];
+            if (value instanceof FileList) {
+              formData.append(key, value[0]);
+            } else {
+              formData.append(key, value ?? '');
+            }
+          }
+        })
+
+        console.log(formData, "<--formData");
+
+        const jounral = await createJournal(formData);
+
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      toast({
-        title: "Journal created",
-        description: "The journal has been created successfully.",
-      })
-
-      // Redirect back to journals list
-      router.push(`/${lang}/admin/journals`)
-      router.refresh()
+      if(jounral) {
+        toast({
+          title: "Journal created",
+          description: "The journal has been created successfully.",
+        })
+  
+        // Redirect back to journals list
+        router.push(`/${lang}/admin/journals`)
+        router.refresh()
+      }
     } catch (error) {
       console.error("Error creating journal:", error)
       toast({
@@ -106,13 +191,19 @@ export function JournalForm({ lang, initialData }: JournalFormProps) {
 
   // Frequency options
   const frequencyOptions = [
-    { value: "weekly", label: "Weekly" },
-    { value: "biweekly", label: "Bi-weekly" },
-    { value: "monthly", label: "Monthly" },
-    { value: "bimonthly", label: "Bi-monthly" },
-    { value: "quarterly", label: "Quarterly" },
-    { value: "semiannually", label: "Semi-annually" },
-    { value: "annually", label: "Annually" },
+    { value: "January", label: "January" },
+    { value: "February", label: "February" },
+    { value: "March", label: "March" },
+    { value: "April", label: "April" },
+    { value: "May", label: "May" },
+    { value: "June", label: "June" },
+    { value: "July", label: "July" },
+    { value: "August", label: "August" },
+    { value: "September", label: "September" },
+    { value: "October", label: "October" },
+    { value: "November", label: "November" },
+    { value: "December", label: "December" },
+    { value: "Other", label: "Other" },
   ]
 
   // Status options
@@ -232,6 +323,83 @@ export function JournalForm({ lang, initialData }: JournalFormProps) {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="file"
+            render={({ field: { onChange, value, ...fieldProps } }) => (
+              <FormItem>
+                <FormLabel>Journal Cover or Document</FormLabel>
+                <FormControl>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="h-9"
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload File
+                      </Button>
+                      {value && value.length > 0 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => clearFile(onChange)}
+                          className="h-9"
+                        >
+                          <X className="mr-2 h-4 w-4" />
+                          Clear
+                        </Button>
+                      )}
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        accept="image/jpeg,image/png,image/jpg,application/pdf"
+                        onChange={(e) => {
+                          handleFileChange(e, onChange)
+                          if (e.target.files && e.target.files[0]) {
+                            const file = e.target.files[0]
+                            if (file.type.startsWith("image/")) {
+                              const url = URL.createObjectURL(file)
+                              setFilePreview(url)
+                            } else {
+                              setFilePreview(null)
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                    {value && value.length > 0 && (
+                      <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                        <File className="h-4 w-4" />
+                        {value[0].name} ({Math.round(value[0].size / 1024)} KB)
+                      </div>
+                    )}
+                    {filePreview && (
+                      <div className="mt-2 relative h-40 w-40 overflow-hidden rounded-md border">
+                        <Image
+                          src={filePreview || "/placeholder.svg"}
+                          alt="File preview"
+                          fill
+                          className="object-cover"
+                          onLoad={() => {
+                            URL.revokeObjectURL(filePreview)
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </FormControl>
+                <FormDescription>Upload a journal cover image (JPEG, PNG) or document (PDF)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <FormField
@@ -267,4 +435,3 @@ export function JournalForm({ lang, initialData }: JournalFormProps) {
     </Form>
   )
 }
-

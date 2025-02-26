@@ -23,8 +23,8 @@ export default function RootLayout({
   const t = translations[lang]
 
   return (
-    <html lang={lang} suppressHydrationWarning>
-      <body className={inter.className}>
+    // <html lang={lang} suppressHydrationWarning>
+      <div className={inter.className}>
         <ThemeProvider>
           <div className="flex min-h-screen flex-col">
             <Header lang={lang} submitText={t?.common?.submitPaper} />
@@ -42,8 +42,8 @@ export default function RootLayout({
             </footer>
           </div>
         </ThemeProvider>
-      </body>
-    </html>
+      </div>
+    // </html>
   )
 }
 
