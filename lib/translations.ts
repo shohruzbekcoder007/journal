@@ -131,6 +131,7 @@ export const translations = {
         delete: "Delete",
         search: "Search journals...",
         noResults: "No journals found.",
+        see: "See",
         columns: {
           title: "Title",
           field: "Field",
@@ -139,6 +140,7 @@ export const translations = {
           status: "Status",
           createdAt: "Created At",
           actions: "Actions",
+          year: "Year",
         },
       },
       authors: {
@@ -148,6 +150,10 @@ export const translations = {
         delete: "Delete",
         search: "Search authors...",
         noResults: "No authors found.",
+        cancel: "Cancel",
+        updating: "Updating...",
+        updateSuccess: "Author updated successfully",
+        updateError: "Failed to update author",
         columns: {
           name: "Name",
           institution: "Institution",
@@ -301,6 +307,7 @@ export const translations = {
         create: "Создать журнал",
         edit: "Редактировать",
         delete: "Удалить",
+        see: "Посмотреть",
         search: "Поиск журналов...",
         noResults: "Журналы не найдены.",
         columns: {
@@ -311,6 +318,7 @@ export const translations = {
           status: "Статус",
           createdAt: "Дата создания",
           actions: "Действия",
+          year: "Год",
         },
       },
       authors: {
@@ -320,6 +328,10 @@ export const translations = {
         delete: "Удалить",
         search: "Поиск авторов...",
         noResults: "Авторы не найдены.",
+        cancel: "Отмена",
+        updating: "Обновление...",
+        updateSuccess: "Автор успешно обновлен",
+        updateError: "Ошибка обновления автора",
         columns: {
           name: "Имя",
           institution: "Учреждение",
@@ -476,6 +488,7 @@ export const translations = {
         delete: "O'chirish",
         search: "Jurnallarni qidirish...",
         noResults: "Jurnallar topilmadi.",
+        see: "Ko'rish",
         columns: {
           title: "Sarlavha",
           field: "Soha",
@@ -484,6 +497,7 @@ export const translations = {
           status: "Holat",
           createdAt: "Yaratilgan sana",
           actions: "Amallar",
+          year: "Yil",
         },
       },
       authors: {
@@ -493,6 +507,10 @@ export const translations = {
         delete: "O'chirish",
         search: "Mualliflarni qidirish...",
         noResults: "Mualliflar topilmadi.",
+        cancel: "Bekor qilish",
+        updating: "Yangilanmoqda...",
+        updateSuccess: "Muallif muvaffaqiyatli yangilandi",
+        updateError: "Muallifni yangilashda xatolik yuz berdi",
         columns: {
           name: "Ism",
           institution: "Muassasa",
@@ -517,7 +535,6 @@ export const translations = {
     },
   },
 }
-
 export type Language = keyof typeof translations
 export type Translation = typeof translations.en
 export type CreateArticleDialogTranslations = Translation["admin"]["articles"]["create_p"]

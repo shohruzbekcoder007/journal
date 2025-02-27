@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { randomUUID } from "crypto";
 import path from "path";
 import { writeFile } from "fs/promises";
-// import { writeFile } from "fs/promises";
 
 export type Journal = {
     id: number;
@@ -17,6 +16,7 @@ export type Journal = {
     status: string;
     createdAt: Date;
     updatedAt: Date;
+    year: number | null;
 };
 
 enum Status {
@@ -25,7 +25,6 @@ enum Status {
     pending = "pending"
 }
 
-// export async function createJournal(data: Omit<Journal, "id" | "createdAt" | "updatedAt">): Promise<Journal> {
 export async function createJournal(formData: FormData): Promise<Journal> {
 
     const file = formData.get("file") as File;
@@ -60,6 +59,7 @@ export async function createJournal(formData: FormData): Promise<Journal> {
         frequency: formData.get("frequency") as string,
         description: formData.get("description") as string,
         publisher: formData.get("publisher") as string,
+        year: parseInt(formData.get("year") as string) || new Date().getFullYear(),
         status,
         file: { connect: { id: savedFile.id } },
     } });
@@ -79,6 +79,10 @@ export async function deleteJournal(id: number): Promise<Journal> {
 }
 
 export async function listJournals(): Promise<Journal[]> {
-    return await prisma.journal.findMany();
+    return await prisma.journal.findMany({
+        include: {
+            file: true,
+        }
+    });
 }
 

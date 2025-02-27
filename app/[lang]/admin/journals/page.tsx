@@ -5,30 +5,32 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { translations, type Language } from "@/lib/translations"
 import { parseTableParams, processTableData } from "@/lib/table-utils"
 import Link from "next/link"
-import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react"
+import { Eye, MoreHorizontal, Pencil, Plus, Trash } from "lucide-react"
+import { listJournals } from "@/app/actions/journal"
+import { useRouter } from "next/navigation"
 
-const journals = [
-  {
-    id: "1",
-    title: "Journal of Advanced Research",
-    field: "Multidisciplinary",
-    issn: "2234-5678",
-    frequency: "Monthly",
-    status: "active",
-    createdAt: "2024-01-15T10:30:00Z",
-  },
-  {
-    id: "2",
-    title: "Medical Science Review",
-    field: "Medicine",
-    issn: "3456-7890",
-    frequency: "Quarterly",
-    status: "active",
-    createdAt: "2024-01-14T15:45:00Z",
-  },
-]
+// const journals = [
+//   {
+//     id: "1",
+//     title: "Journal of Advanced Research",
+//     field: "Multidisciplinary",
+//     issn: "2234-5678",
+//     frequency: "Monthly",
+//     status: "active",
+//     createdAt: "2024-01-15T10:30:00Z",
+//   },
+//   {
+//     id: "2",
+//     title: "Medical Science Review",
+//     field: "Medicine",
+//     issn: "3456-7890",
+//     frequency: "Quarterly",
+//     status: "active",
+//     createdAt: "2024-01-14T15:45:00Z",
+//   },
+// ]
 
-export default function AdminJournalsPage({
+export default async function AdminJournalsPage({
   params: { lang },
   searchParams,
 }: {
@@ -38,11 +40,14 @@ export default function AdminJournalsPage({
   const t = translations[lang].admin.journals
   const tableParams = parseTableParams(new URLSearchParams(searchParams as Record<string, string>))
 
+  const journals = await listJournals()
+
   const { data, pageCount, currentPage } = processTableData(journals, tableParams, [
     "title",
     "field",
     "issn",
     "frequency",
+    "year",
     "status",
   ])
 
@@ -78,6 +83,12 @@ export default function AdminJournalsPage({
       sortable: true,
     },
     {
+      key: "Year",
+      header: t.columns.year,
+      cell: (journal: (typeof journals)[0]) => journal.year,
+      sortable: true,
+    },
+    {
       key: "createdAt",
       header: t.columns.createdAt,
       cell: (journal: (typeof journals)[0]) => new Date(journal.createdAt).toLocaleDateString(),
@@ -95,6 +106,12 @@ export default function AdminJournalsPage({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <Link href={`/admin/journals/${journal.id}/articles`} key={journal.id}>
+              <DropdownMenuItem>
+                <Eye className="mr-2 h-4 w-4" />
+                {t.see}
+              </DropdownMenuItem>
+            </Link>
             <Link href={`/${lang}/admin/journals/${journal.id}/edit`}>
               <DropdownMenuItem>
                 <Pencil className="mr-2 h-4 w-4" />

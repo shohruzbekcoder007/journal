@@ -53,6 +53,7 @@ model Journal {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   fileId      Int?     @unique
+  year        Int?
   file        File?    @relation(fields: [fileId], references: [id])
 }
 

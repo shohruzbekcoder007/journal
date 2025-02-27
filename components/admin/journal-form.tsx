@@ -43,6 +43,9 @@ const journalSchema = z.object({
   publisher: z.string().min(2, {
     message: "Publisher must be at least 2 characters.",
   }),
+  year: z.number().int().min(4, {
+    message: "Year must be a 4-digit number.",
+  }),
   status: z.enum(["active", "inactive", "pending"], {
     required_error: "Please select a status.",
   }),
@@ -76,6 +79,7 @@ const defaultValues: Partial<JournalFormValues> = {
   description: "",
   publisher: "",
   status: "active",
+  year: new Date().getFullYear(),
   // file is handled separately since it can't be initialized with a value
 }
 
@@ -145,34 +149,31 @@ export function JournalForm({ lang, initialData }: JournalFormProps) {
       }
 
       const formData = new FormData()
-        Object.keys(data).forEach((key) => {
-          if (key === "file") {
-            if (data.file && data.file.length > 0) {
-              formData.append(key, data.file[0])
-            }
-          } else {
-            const value = data[key as keyof JournalFormValues];
+      Object.keys(data).forEach((key) => {
+        if (key === "file") {
+          if (data.file && data.file.length > 0) {
+            formData.append(key, data.file[0])
+          }
+        } else {
+          const value = data[key as keyof JournalFormValues];
+          if (value !== undefined) {
             if (value instanceof FileList) {
               formData.append(key, value[0]);
             } else {
-              formData.append(key, value ?? '');
+              formData.append(key, value.toString());
             }
           }
-        })
+        }
+      });
 
-        console.log(formData, "<--formData");
+      const jounral = await createJournal(formData);
 
-        const jounral = await createJournal(formData);
-
-      // Simulate API call
-      // await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      if(jounral) {
+      if (jounral) {
         toast({
           title: "Journal created",
           description: "The journal has been created successfully.",
         })
-  
+
         // Redirect back to journals list
         router.push(`/${lang}/admin/journals`)
         router.refresh()
@@ -293,6 +294,20 @@ export function JournalForm({ lang, initialData }: JournalFormProps) {
                 <FormLabel>Publisher</FormLabel>
                 <FormControl>
                   <Input placeholder="Publisher name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="year"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Publisher</FormLabel>
+                <FormControl>
+                  <Input placeholder="Publisher name" {...field} type="number"/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
