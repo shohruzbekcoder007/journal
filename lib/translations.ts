@@ -29,6 +29,18 @@ export const translations = {
         description: "Comprehensive analytics dashboard tracking citations, downloads, and research impact metrics",
       },
     },
+    video: {
+      title: "Discover Our Journal",
+      description:
+        "Watch our video to learn more about the journal's mission, impact, and how to contribute your research.",
+      videoTitle: "SciPublish Journal Overview",
+      caption: "Learn about our peer review process, publication standards, and the benefits of publishing with us.",
+    },
+    partners: {
+      title: "Our Academic Partners",
+      description:
+        "We collaborate with leading universities and research institutions worldwide to advance scientific knowledge.",
+    },
     common: {
       submitPaper: "Submit Paper",
       footer: "© 2024 SciPublish. Advancing scientific knowledge through collaboration.",
@@ -206,6 +218,18 @@ export const translations = {
         description:
           "Комплексная панель аналитики для отслеживания цитирований, загрузок и метрик влияния исследований",
       },
+    },
+    video: {
+      title: "Узнайте о нашем журнале",
+      description:
+        "Посмотрите наше видео, чтобы узнать больше о миссии журнала, его влиянии и о том, как внести свой вклад в исследования.",
+      videoTitle: "Обзор журнала SciPublish",
+      caption: "Узнайте о нашем процессе рецензирования, стандартах публикации и преимуществах публикации у нас.",
+    },
+    partners: {
+      title: "Наши академические партнеры",
+      description:
+        "Мы сотрудничаем с ведущими университетами и исследовательскими учреждениями по всему миру для развития научных знаний.",
     },
     common: {
       submitPaper: "Отправить статью",
@@ -385,6 +409,19 @@ export const translations = {
         description:
           "Iqtiboslar, yuklab olishlar va tadqiqot ta'siri ko'rsatkichlarini kuzatish uchun keng qamrovli tahlil paneli",
       },
+    },
+    video: {
+      title: "Jurnalimiz haqida bilib oling",
+      description:
+        "Jurnalning vazifasi, ta'siri va tadqiqotlaringizni qanday kiritish haqida ko'proq ma'lumot olish uchun videomizni tomosha qiling.",
+      videoTitle: "SciPublish jurnali sharhi",
+      caption:
+        "Bizning ko'rib chiqish jarayonimiz, nashr standartlari va biz bilan nashr etishning afzalliklari haqida bilib oling.",
+    },
+    partners: {
+      title: "Bizning akademik hamkorlarimiz",
+      description:
+        "Biz ilmiy bilimlarni rivojlantirish uchun dunyo bo'ylab yetakchi universitetlar va tadqiqot institutlari bilan hamkorlik qilamiz.",
     },
     common: {
       submitPaper: "Maqola yuborish",

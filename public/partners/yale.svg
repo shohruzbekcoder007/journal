@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <rect width="200" height="100" fill="#fff"/>
+  <path d="M40 30h120v40H40z" fill="#0f4d92"/>
+  <text x="100" y="60" font-family="serif" font-size="32" text-anchor="middle" fill="#fff">YALE</text>
+</svg>
