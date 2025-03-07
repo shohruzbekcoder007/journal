@@ -3,33 +3,6 @@ import type { Language } from "@/lib/translations"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { getAuthors } from "@/app/actions/author"
 
-const authors = [
-  {
-    id: "1",
-    name: "Dr. Sarah Johnson",
-    institution: "Stanford University",
-    field: "Quantum Physics",
-    publications: 45,
-    avatar: "/placeholder.svg",
-  },
-  {
-    id: "2",
-    name: "Prof. Michael Chen",
-    institution: "MIT",
-    field: "Computer Science",
-    publications: 78,
-    avatar: "/placeholder.svg",
-  },
-  {
-    id: "3",
-    name: "Dr. Emma Williams",
-    institution: "Oxford University",
-    field: "Neuroscience",
-    publications: 32,
-    avatar: "/placeholder.svg",
-  },
-]
-
 export default async function AuthorsPage({ params: { lang } }: { params: { lang: Language } }) {
   const t = translations[lang]
 

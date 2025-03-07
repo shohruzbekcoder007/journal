@@ -7,28 +7,6 @@ import { parseTableParams, processTableData } from "@/lib/table-utils"
 import Link from "next/link"
 import { Eye, MoreHorizontal, Pencil, Plus, Trash } from "lucide-react"
 import { listJournals } from "@/app/actions/journal"
-import { useRouter } from "next/navigation"
-
-// const journals = [
-//   {
-//     id: "1",
-//     title: "Journal of Advanced Research",
-//     field: "Multidisciplinary",
-//     issn: "2234-5678",
-//     frequency: "Monthly",
-//     status: "active",
-//     createdAt: "2024-01-15T10:30:00Z",
-//   },
-//   {
-//     id: "2",
-//     title: "Medical Science Review",
-//     field: "Medicine",
-//     issn: "3456-7890",
-//     frequency: "Quarterly",
-//     status: "active",
-//     createdAt: "2024-01-14T15:45:00Z",
-//   },
-// ]
 
 export default async function AdminJournalsPage({
   params: { lang },
@@ -106,7 +84,7 @@ export default async function AdminJournalsPage({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <Link href={`/admin/journals/${journal.id}/articles`} key={journal.id}>
+            <Link href={`/${lang}/admin/journals/${journal.id}/articles`} key={journal.id}>
               <DropdownMenuItem>
                 <Eye className="mr-2 h-4 w-4" />
                 {t.see}

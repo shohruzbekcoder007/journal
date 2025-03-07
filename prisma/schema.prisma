@@ -23,6 +23,7 @@ model File {
   id        Int      @id @default(autoincrement())
   Author    Author?
   Journal   Journal?
+  Articles  Articles?
 }
 
 model Author {
@@ -55,6 +56,21 @@ model Journal {
   fileId      Int?     @unique
   year        Int?
   file        File?    @relation(fields: [fileId], references: [id])
+  articles    Articles[]
+}
+
+model Articles {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255) @unique
+  description String
+  status      status   @default(active)
+  fileId      Int?     @unique
+  file        File?    @relation(fields: [fileId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      String   @db.VarChar(255) @unique
+  journalId   Int
+  journal     Journal  @relation(fields: [journalId], references: [id])
 }
 
 enum status {

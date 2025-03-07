@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -75,7 +73,7 @@ interface AuthorFormProps {
 export function AuthorForm({ lang, initialData }: AuthorFormProps) {
     const t = translations[lang].admin.authors
     const router = useRouter()
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isPending, startTransition] = useTransition()
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
 
@@ -96,24 +94,7 @@ export function AuthorForm({ lang, initialData }: AuthorFormProps) {
 
     // Handle form submission
     async function onSubmit(data: AuthorFormValues) {
-        setIsSubmitting(true)
-
         try {
-            // In a real application, this would be an API call
-            console.log("Author data:", data)
-
-            // const author = {
-            //     fullName: data.name,
-            //     email: data.email,
-            //     institution: data.institution,
-            //     researchField: data.field,
-            //     publicationsCount: data.publications,
-            //     orcidId: data.orcid,
-            //     status: data.status,
-            //     biography: data.bio,
-            //     // photoId: data['avatar-upload']
-            // };
-
             const formData = new FormData();
             formData.append("fullName", data.name);
             formData.append("email", data.email);
@@ -128,26 +109,40 @@ export function AuthorForm({ lang, initialData }: AuthorFormProps) {
                 formData.append("file", avatarFile);
             }
 
-            const author = await createAuthor(formData);
-
-            if (author.success) {
-                toast({
-                    title: "Author created",
-                    description: "The author has been created successfully.",
-                })
-
-                router.push(`/${lang}/admin/authors`)
-                router.refresh()
-            }
+            startTransition(async () => {
+                try {
+                    const result = await createAuthor(formData);
+                    
+                    if (result.success) {
+                        toast({
+                            title: "Success",
+                            description: "Author created successfully",
+                        });
+                        router.push(`/${lang}/admin/authors`);
+                        router.refresh();
+                    } else {
+                        toast({
+                            title: "Error",
+                            description: result.error || "Failed to create author",
+                            variant: "destructive",
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error in transition:", error);
+                    toast({
+                        title: "Error",
+                        description: error instanceof Error ? error.message : "An unexpected error occurred",
+                        variant: "destructive",
+                    });
+                }
+            });
         } catch (error) {
-            console.error("Error creating author:", error)
+            console.error("Error preparing form data:", error);
             toast({
                 title: "Error",
-                description: "There was an error creating the author. Please try again.",
+                description: "Failed to prepare form data",
                 variant: "destructive",
-            })
-        } finally {
-            setIsSubmitting(false)
+            });
         }
     }
 
@@ -360,17 +355,16 @@ export function AuthorForm({ lang, initialData }: AuthorFormProps) {
                         type="button"
                         variant="outline"
                         onClick={() => router.push(`/${lang}/admin/authors`)}
-                        disabled={isSubmitting}
+                        disabled={isPending}
                     >
                         Cancel
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {isSubmitting ? "Creating..." : "Create Author"}
+                    <Button type="submit" disabled={isPending}>
+                        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isPending ? "Creating..." : "Create Author"}
                     </Button>
                 </div>
             </form>
         </Form>
     )
 }
-
