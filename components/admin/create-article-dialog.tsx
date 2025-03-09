@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Loader2 } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -21,6 +20,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
+import { createArticle } from "@/app/actions/articles"
+// import FileInput from "../FileInput"
+import { useParams } from "next/navigation";
 
 interface CreateArticleDialogProps {
   translations: {
@@ -33,8 +35,10 @@ interface CreateArticleDialogProps {
       abstractPlaceholder: string
       authors: string
       authorsPlaceholder: string
-      category: string
-      categoryPlaceholder: string
+      status: string
+      statusPlaceholder: string
+      file: string
+      filePlaceholder: string
       submit: string
     }
     success: string
@@ -43,25 +47,27 @@ interface CreateArticleDialogProps {
   trigger: React.ReactNode
 }
 
-const categories = [
-  { value: "computer-science", label: "Computer Science" },
-  { value: "medicine", label: "Medicine" },
-  { value: "physics", label: "Physics" },
-  { value: "biology", label: "Biology" },
-  { value: "chemistry", label: "Chemistry" },
+const statuses = [
+  { value: "active", label: "Active" },
+  { value: "inactive", label: "Inactive" },
+  { value: "pending", label: "Pending" },
 ]
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   abstract: z.string().min(1, "Abstract is required"),
   authors: z.string().min(1, "Authors are required"),
-  category: z.string().min(1, "Category is required"),
+  status: z.string().min(1, "Status is required"),
+  file: z.instanceof(File).nullable(),
 })
 
 export function CreateArticleDialog({ translations, trigger }: CreateArticleDialogProps) {
   const [open, setOpen] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(false)
   const { toast } = useToast()
+  const [isPending, startTransition] = React.useTransition()
+
+  const params = useParams();
+  const id = params.id;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,28 +75,62 @@ export function CreateArticleDialog({ translations, trigger }: CreateArticleDial
       title: "",
       abstract: "",
       authors: "",
-      category: "",
+      status: "",
+      file: null,
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
     try {
-      // Here you would typically make an API call to create the article
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const formData = new FormData()
+      Object.entries(values).forEach(([key, value]) => {
+        if (key === "file" && value instanceof File) {
+          formData.append(key, value, value.name);
+        } else {
+          if (key === "authors") {
+            formData.append("author", (value !== undefined && value !== null) ? value?.toString() : '');
+          } else if (key === "abstract") {
+            formData.append("description", (value !== undefined && value !== null) ? value?.toString() : '');
+          } else {
+            formData.append(key, (value !== undefined && value !== null) ? value?.toString() : '');
+          }
+        }
+      });
 
-      toast({
-        description: translations.success,
-      })
-      setOpen(false)
-      form.reset()
+      formData.append("journalId", String(id));
+
+      startTransition(async () => {
+        try {
+          const result = await createArticle(formData);
+          const parsedResult = JSON.parse(result);
+          if (!parsedResult.success) {
+            toast({
+              variant: "destructive",
+              description: translations.error,
+            })
+          } else {
+            toast({
+              description: translations.success,
+            })
+            setOpen(false)
+            form.reset()
+          }
+        } catch (error) {
+          toast({
+            variant: "destructive",
+            description: translations.error,
+          })
+          setOpen(false)
+          form.reset()
+        }
+
+      });
+
     } catch (error) {
       toast({
         variant: "destructive",
         description: translations.error,
       })
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -111,7 +151,7 @@ export function CreateArticleDialog({ translations, trigger }: CreateArticleDial
                 <FormItem>
                   <FormLabel>{translations.form?.title}</FormLabel>
                   <FormControl>
-                    <Input placeholder={translations.form?.titlePlaceholder} disabled={isLoading} {...field} />
+                    <Input placeholder={translations.form?.titlePlaceholder} disabled={isPending} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,7 +167,7 @@ export function CreateArticleDialog({ translations, trigger }: CreateArticleDial
                     <Textarea
                       placeholder={translations.form?.abstractPlaceholder}
                       className="h-32"
-                      disabled={isLoading}
+                      disabled={isPending}
                       {...field}
                     />
                   </FormControl>
@@ -142,7 +182,7 @@ export function CreateArticleDialog({ translations, trigger }: CreateArticleDial
                 <FormItem>
                   <FormLabel>{translations.form?.authors}</FormLabel>
                   <FormControl>
-                    <Input placeholder={translations.form?.authorsPlaceholder} disabled={isLoading} {...field} />
+                    <Input placeholder={translations.form?.authorsPlaceholder} disabled={isPending} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -150,31 +190,52 @@ export function CreateArticleDialog({ translations, trigger }: CreateArticleDial
             />
             <FormField
               control={form.control}
-              name="category"
+              name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{translations.form?.category}</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={translations.form?.categoryPlaceholder} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.value} value={category.value}>
-                          {category.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>{translations.form?.status}</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={translations.form?.statusPlaceholder} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {statuses.map((status) => (
+                          <SelectItem key={status.value} value={status.value}>
+                            {status.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="file"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{translations.form?.file}</FormLabel>
+                  <FormControl>
+                    <Input onChange={val => field.onChange(val.target.files?.[0])} id="picture" type="file" placeholder={translations.form?.filePlaceholder} disabled={isPending} />
+                    {/* <FileInput
+                      type="file"
+                      placeholder={translations.form?.filePlaceholder}
+                      disabled={isPending}
+                      {...field}
+                    /> */}
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button type="submit" disabled={isPending}>
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {translations.form?.submit}
               </Button>
             </DialogFooter>
@@ -184,3 +245,4 @@ export function CreateArticleDialog({ translations, trigger }: CreateArticleDial
     </Dialog>
   )
 }
+

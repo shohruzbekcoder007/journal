@@ -48,18 +48,22 @@ export async function createArticle(formData: FormData) {
 
     const status = formData.get("status") as Status;
 
-    const article = await prisma.articles.create({
-        data: {
-            title: formData.get("title") as string,
-            description: formData.get("description") as string,
-            status: status || Status.pending,
-            fileId: savedFile.id,
-            author: formData.get("author") as string,
-            journalId: Number(formData.get("journalId"))
-        }
-    });
+    try{
+        const article = await prisma.articles.create({
+            data: {
+                title: formData.get("title") as string,
+                description: formData.get("description") as string,
+                status: status || Status.pending,
+                fileId: savedFile.id,
+                author: formData.get("author") as string,
+                journalId: Number(formData.get("journalId"))
+            }
+        });
+        return JSON.stringify({ success: true, data: article });
+    }catch (error) {
+        return JSON.stringify({ success: false, data: error });
+    }
 
-    return article;
 }
 
 export async function getArticle(id: number) {

@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { parseTableParams, processTableData } from "@/lib/table-utils"
 import Link from "next/link"
 import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react"
+import { getArticlesFromJournalId } from "@/app/actions/articles"
 
 const articles = [
   {
@@ -27,7 +28,7 @@ const articles = [
   },
 ]
 
-export default function AdminArticlesPage({
+export default async function AdminArticlesPage({
   params: { lang, id },
   searchParams,
 }: {
@@ -39,10 +40,22 @@ export default function AdminArticlesPage({
   const createArticleTranslations: CreateArticleDialogTranslations = t.admin.articles.create_p
   const tableParams = parseTableParams(new URLSearchParams(searchParams as Record<string, string>))
 
-  const { data, pageCount, currentPage } = processTableData(articles, tableParams, [
+  const articleList = await (await getArticlesFromJournalId(Number(id))).map((article) => {
+    return {
+      id: article.id,
+      title: article.title,
+      authors: article.author,
+      // category: article.title,
+      status: article.status,
+      createdAt: article.createdAt,
+      file: article?.file?.path
+    }
+  })
+
+  const { data, pageCount, currentPage } = processTableData(articleList, tableParams, [
     "title",
     "authors",
-    "category",
+    // "category",
     "status",
   ])
 
@@ -50,39 +63,42 @@ export default function AdminArticlesPage({
     {
       key: "title",
       header: t.admin.articles.columns.title,
-      cell: (article: (typeof articles)[0]) => article.title,
+      cell: (article: (typeof articleList)[0]) => article.title,
       sortable: true,
     },
     {
       key: "authors",
       header: t.admin.articles.columns.authors,
-      cell: (article: (typeof articles)[0]) => article.authors,
-      sortable: true,
-    },
-    {
-      key: "category",
-      header: t.admin.articles.columns.category,
-      cell: (article: (typeof articles)[0]) => article.category,
+      cell: (article: (typeof articleList)[0]) => article.authors,
       sortable: true,
     },
     {
       key: "status",
       header: t.admin.articles.columns.status,
-      cell: (article: (typeof articles)[0]) => (
-        <Badge variant={article.status === "published" ? "default" : "secondary"}>{article.status}</Badge>
+      cell: (article: (typeof articleList)[0]) => (
+        <Badge variant={article.status === "active" ? "default" : "secondary"}>{article.status}</Badge>
       ),
       sortable: true,
     },
     {
+      key: "file",
+      header: t.admin.articles.columns.category,
+      cell: (article: (typeof articleList)[0]) => (
+        <a href={article.file} target="_blank" rel="noopener noreferrer">
+          <Button variant="link">Download PDF</Button>
+        </a>),
+      sortable: false,
+    },
+    {
       key: "createdAt",
       header: t.admin.articles.columns.createdAt,
-      cell: (article: (typeof articles)[0]) => new Date(article.createdAt).toLocaleDateString(),
+      cell: (article: (typeof articleList)[0]) => new Date(article.createdAt).toLocaleDateString(),
       sortable: true,
     },
     {
       key: "actions",
       header: t.admin.articles.columns.actions,
-      cell: (article: (typeof articles)[0]) => (
+      cell: (article: (typeof articleList)[0]) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
