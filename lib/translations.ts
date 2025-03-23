@@ -79,6 +79,10 @@ export const translations = {
       cancelButton: "Cancel",
       submitButton: "Submit Paper",
       helpText: "Need help with your submission? Contact our editorial team at",
+      monthLabel: "Month",
+      monthPlaceholder: "Select a month",
+      yearLabel: "Year",
+      yearPlaceholder: "Select a year",
     },
     articles: {
       title: "Scientific Articles",
@@ -309,6 +313,10 @@ export const translations = {
       cancelButton: "Отмена",
       submitButton: "Отправить статью",
       helpText: "Нужна помощь с отправкой? Свяжитесь с нашей редакционной командой по адресу",
+      monthLabel: "Месяц",
+      monthPlaceholder: "Выберите месяц",
+      yearLabel: "Год",
+      yearPlaceholder: "Выберите год",
     },
     articles: {
       title: "Научные статьи",
@@ -541,6 +549,10 @@ export const translations = {
       cancelButton: "Bekor qilish",
       submitButton: "Maqolani yuborish",
       helpText: "Yuborish bo'yicha yordam kerakmi? Tahririyat jamoamiz bilan bog'laning",
+      monthLabel: "Oy",
+      monthPlaceholder: "Oyni tanlang",
+      yearLabel: "Yil",
+      yearPlaceholder: "Yilni tanlang",
     },
     articles: {
       title: "Ilmiy maqolalar",

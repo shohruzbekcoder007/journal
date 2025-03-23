@@ -24,6 +24,7 @@ model File {
   Author    Author?
   Journal   Journal?
   Articles  Articles[]
+  AcceptedArticle AcceptedArticle[]
 }
 
 model Author {
@@ -71,6 +72,23 @@ model Articles {
   author      String   @db.VarChar(255) @unique
   journalId   Int
   journal     Journal  @relation(fields: [journalId], references: [id])
+}
+
+model AcceptedArticle {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  description String
+  status      status   @default(pending)
+  fileId      Int?     
+  file        File?    @relation(fields: [fileId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      String   @db.VarChar(255) @unique
+  keyword     String
+  month       String
+  year        Int
+  frequency   String
+  comments    String
 }
 
 enum status {

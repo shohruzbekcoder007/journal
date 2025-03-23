@@ -107,7 +107,8 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
               <Label htmlFor="file">
                 {t.submit?.fileLabel || "Paper File"} <span className="text-destructive">*</span>
               </Label>
-              <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition-colors">
+              <input type="file" id="file" className="hidden" />
+              <label htmlFor="file" className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition-colors">
                 <FileUpload className="h-10 w-10 text-muted-foreground" />
                 <p className="font-medium">
                   {t.submit?.dropzoneText || "Drag and drop your file here or click to browse"}
@@ -119,7 +120,41 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
                   <Upload className="mr-2 h-4 w-4" />
                   {t.submit?.browseButton || "Browse Files"}
                 </Button>
-              </div>
+              </label>
+            </div>
+
+            {/* Year */}
+            <div className="space-y-2">
+              <Label htmlFor="year">
+                {t.submit?.yearLabel || "Year"} <span className="text-destructive">*</span>
+              </Label>
+              <Input type="number" id="year" placeholder={t.submit?.yearPlaceholder || "Enter the year of your paper"} />
+            </div>
+
+            {/* Month */}
+            <div className="space-y-2">
+              <Label htmlFor="month">
+                {t.submit?.monthLabel || "Month"} <span className="text-destructive">*</span>
+              </Label>
+              <Select>
+                <SelectTrigger id="month">
+                  <SelectValue placeholder={t.submit?.monthPlaceholder || "Select a month"} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="January">January</SelectItem>
+                  <SelectItem value="February">February</SelectItem>
+                  <SelectItem value="March">March</SelectItem>
+                  <SelectItem value="April">April</SelectItem>
+                  <SelectItem value="May">May</SelectItem>
+                  <SelectItem value="June">June</SelectItem>
+                  <SelectItem value="July">July</SelectItem>
+                  <SelectItem value="August">August</SelectItem>
+                  <SelectItem value="September">September</SelectItem>
+                  <SelectItem value="October">October</SelectItem>
+                  <SelectItem value="November">November</SelectItem>
+                  <SelectItem value="December">December</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Additional Comments */}
@@ -140,14 +175,14 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
           </CardFooter>
         </Card>
 
-        <div className="mt-8 text-center text-sm text-muted-foreground">
+        {/* <div className="mt-8 text-center text-sm text-muted-foreground">
           <p>
             {t.submit?.helpText || "Need help with your submission? Contact our editorial team at"}{" "}
             <a href="mailto:editorial@scipublish.com" className="text-primary hover:underline">
               editorial@scipublish.com
             </a>
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   )
