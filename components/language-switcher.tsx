@@ -3,11 +3,12 @@
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Languages } from "lucide-react"
+import { Globe, Languages } from "lucide-react"
 import type { Language } from "@/lib/translations"
 
 interface LanguageSwitcherProps {
   currentLang: Language
+  variant?: "default" | "header"
 }
 
 const languages = [
@@ -16,7 +17,7 @@ const languages = [
   { code: "uz", name: "O'zbek" },
 ]
 
-export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ currentLang, variant = "default" }: LanguageSwitcherProps) {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -30,8 +31,16 @@ export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="h-8 w-8 md:h-9 md:w-9">
-          <Languages className="h-4 w-4 md:h-5 md:w-5" />
+        <Button
+          variant={variant === "header" ? "ghost" : "outline"}
+          size="icon"
+          className={cn(
+            "h-8 w-8 md:h-9 md:w-9",
+            variant === "header" && "text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+          )}
+        >
+          {/* <Languages className="h-4 w-4 md:h-5 md:w-5" /> */}
+          <Globe className="h-4 w-4 md:h-5 md:w-5" />
           <span className="sr-only">Switch language</span>
         </Button>
       </DropdownMenuTrigger>
@@ -45,5 +54,9 @@ export function LanguageSwitcher({ currentLang }: LanguageSwitcherProps) {
       </DropdownMenuContent>
     </DropdownMenu>
   )
+}
+
+function cn(...inputs: any[]) {
+  return inputs.filter(Boolean).join(" ")
 }
 

@@ -23,25 +23,23 @@ export default async function AuthorsPage({ params: { lang } }: { params: { lang
     <div className="container py-8">
       <div className="flex flex-col gap-6">
         <h1 className="text-3xl font-bold tracking-tight">{t.authors.title}</h1>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
           {authors.map((author) => (
             <div key={author.id} className="flex items-start space-x-4 rounded-lg border p-4">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={author.avatar} />
-                <AvatarFallback>
-                  {author.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <h3 className="font-semibold">{author.name}</h3>
+              <div className="h-60 w-60 bg-background rounded-lg overflow-hidden">
+                <img
+                  src={author.avatar}
+                  alt={author.name}
+                  className="h-full w-full object-cover object-top"
+                />
+              </div>
+              <div className="w-[320px] flex flex-col space-y-2 justify-center pl-1 ">
+                <h3 className="font-semibold text-[20px]">{author.name}</h3>
                 <div className="text-sm text-muted-foreground">
-                  <p>{author.institution}</p>
-                  <p>
+                  <h5>{author.institution}</h5>
+                  <h6 className="my-2">
                     {t.authors.field}: {author.field}
-                  </p>
+                  </h6>
                   <p>
                     {t.authors.publications}: {author.publications}
                   </p>

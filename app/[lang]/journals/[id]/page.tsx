@@ -1,52 +1,10 @@
 import { ServerTable } from "@/components/server-table"
 import { translations, type Language } from "@/lib/translations"
 import { parseTableParams, processTableData } from "@/lib/table-utils"
+import { getArticlesFromJournalId } from "@/app/actions/articles"
+import { Button } from "@/components/ui/button"
 
-// Simulated article data - in real app, this would come from an API or database
-const articles = [
-  {
-    id: "1",
-    title: "Advances in Quantum Computing: A New Paradigm",
-    authors: "John Smith, Maria Garcia",
-    category: "Computer Science",
-    createdAt: "2024-02-15T10:30:00Z",
-    status: "published",
-  },
-  {
-    id: "2",
-    title: "Climate Change Effects on Marine Ecosystems",
-    authors: "David Chen, Sarah Johnson",
-    category: "Environmental Science",
-    createdAt: "2024-02-14T15:45:00Z",
-    status: "published",
-  },
-  {
-    id: "3",
-    title: "Novel Approaches to Cancer Treatment",
-    authors: "Emma Williams, James Lee",
-    category: "Medicine",
-    createdAt: "2024-02-13T09:20:00Z",
-    status: "published",
-  },
-  {
-    id: "4",
-    title: "Machine Learning in Healthcare",
-    authors: "Michael Brown, Lisa Anderson",
-    category: "Healthcare",
-    createdAt: "2024-02-12T14:15:00Z",
-    status: "published",
-  },
-  {
-    id: "5",
-    title: "Sustainable Energy Solutions",
-    authors: "Robert Taylor, Anna Martinez",
-    category: "Engineering",
-    createdAt: "2024-02-11T11:00:00Z",
-    status: "published",
-  },
-]
-
-export default function ArticlesPage({
+export default async function ArticlesPage({
   params: { lang, id },
   searchParams,
 }: {
@@ -56,32 +14,47 @@ export default function ArticlesPage({
   const t = translations[lang]
   const tableParams = parseTableParams(new URLSearchParams(searchParams as Record<string, string>))
 
-  const { data, pageCount, currentPage } = processTableData(articles, tableParams, ["title", "authors", "category"])
+  const articleList = await (await getArticlesFromJournalId(Number(id))).map((article) => {
+    return {
+      id: article.id,
+      title: article.title,
+      authors: article.author,
+      category: article.title,
+      status: article.status,
+      createdAt: article.createdAt,
+      file: article?.file?.path
+    }
+  })
+
+  const { data, pageCount, currentPage } = processTableData(articleList, tableParams, ["title", "authors"])
 
   const columns = [
     {
       key: "title",
       header: t.articles.columns.title,
-      cell: (article: (typeof articles)[0]) => <div className="font-medium">{article.title}</div>,
+      cell: (article: (typeof articleList)[0]) => <div className="font-medium">{article.title}</div>,
       sortable: true,
     },
     {
       key: "authors",
       header: t.articles.columns.authors,
-      cell: (article: (typeof articles)[0]) => article.authors,
-      sortable: true,
-    },
-    {
-      key: "category",
-      header: t.articles.columns.category,
-      cell: (article: (typeof articles)[0]) => article.category,
+      cell: (article: (typeof articleList)[0]) => article.authors,
       sortable: true,
     },
     {
       key: "createdAt",
       header: t.articles.columns.createdAt,
-      cell: (article: (typeof articles)[0]) => new Date(article.createdAt).toLocaleDateString(),
+      cell: (article: (typeof articleList)[0]) => new Date(article.createdAt).toLocaleDateString(),
       sortable: true,
+    },
+    {
+      key: "file",
+      header: t.articles.columns.file,
+      cell: (article: (typeof articleList)[0]) => (
+        <a href={article.file} target="_blank" rel="noopener noreferrer">
+          <Button variant="link">Download PDF</Button>
+        </a>),
+      sortable: false,
     },
   ]
 

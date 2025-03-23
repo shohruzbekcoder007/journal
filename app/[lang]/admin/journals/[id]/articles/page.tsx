@@ -9,25 +9,6 @@ import Link from "next/link"
 import { MoreHorizontal, Pencil, Plus, Trash } from "lucide-react"
 import { getArticlesFromJournalId } from "@/app/actions/articles"
 
-const articles = [
-  {
-    id: "1",
-    title: "Advances in Quantum Computing",
-    authors: "John Smith, Maria Garcia",
-    category: "Computer Science",
-    status: "published",
-    createdAt: "2024-02-15T10:30:00Z",
-  },
-  {
-    id: "2",
-    title: "Climate Change Effects",
-    authors: "David Chen, Sarah Johnson",
-    category: "Environmental Science",
-    status: "draft",
-    createdAt: "2024-02-14T15:45:00Z",
-  },
-]
-
 export default async function AdminArticlesPage({
   params: { lang, id },
   searchParams,

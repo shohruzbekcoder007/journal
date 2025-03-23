@@ -3,6 +3,10 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
+import jwt  from "jsonwebtoken";
+require('dotenv').config()
+
+const secretKey = process.env.SECRET_KEY; // Replace with a strong secret
 
 export async function registerUser(email: string, name: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -25,7 +29,22 @@ export async function loginUser(email: string, password: string) {
         return { success: false, message: "Invalid credentials" };
     }
 
-    cookies().set("auth", user.id.toString(), { httpOnly: true, sameSite: "strict", path: "/" });
+    const payload = {
+        userId: user?.id,
+        username: user?.name,
+        email: user?.email,
+        role: 'admin'
+      };
+
+      if (!secretKey) {
+        throw new Error('SECRET_KEY environment variable is not set');
+      }
+      
+      const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+      
+      console.log('Generated Token:', token);
+
+    cookies().set("auth", token, { httpOnly: true, sameSite: "strict", path: "/" });
 
     return { success: true, user };
 }

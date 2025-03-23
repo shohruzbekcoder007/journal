@@ -106,7 +106,7 @@ export function Sidebar(props: SidebarProps) {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden md:block fixed top-0 left-0 bottom-0 z-30">
+      <div className="hidden md:block fixed top-0 left-0 bottom-0">
         <div className="h-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <SidebarNav {...props} />
         </div>
