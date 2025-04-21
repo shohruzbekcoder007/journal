@@ -78,6 +78,11 @@ export const translations = {
       commentsPlaceholder: "Any additional information you'd like to share with the editors",
       cancelButton: "Cancel",
       submitButton: "Submit Paper",
+      submittingButton: "Submitting...",
+      validationError: "Please fill in all required fields",
+      fileRequired: "Please upload your paper file",
+      successMessage: "Your paper has been successfully submitted!",
+      errorMessage: "Failed to submit paper. Please try again.",
       helpText: "Need help with your submission? Contact our editorial team at",
     },
     articles: {
@@ -114,6 +119,7 @@ export const translations = {
         journals: "Journals",
         authors: "Authors",
         resources: "Resources",
+        submissions: "Submissions",
       },
       stats: {
         articles: "Total Articles",
@@ -193,6 +199,36 @@ export const translations = {
           createdAt: "Created At",
           actions: "Actions",
           year: "Year",
+        },
+      },
+      submissions: {
+        title: "Manage Submissions",
+        viewTitle: "Submission Details",
+        back: "Back",
+        view: "View",
+        download: "Download",
+        approve: "Approve",
+        reject: "Reject",
+        resetStatus: "Reset to Pending",
+        statusActive: "Approved",
+        statusInactive: "Rejected",
+        statusPending: "Pending",
+        submittedOn: "Submitted on",
+        authors: "Authors",
+        category: "Category",
+        keywords: "Keywords",
+        abstract: "Abstract",
+        comments: "Additional Comments",
+        file: "Paper File",
+        tableCaption: "List of all submitted papers",
+        noResults: "No submissions found.",
+        columns: {
+          title: "Title",
+          authors: "Authors",
+          category: "Category",
+          status: "Status",
+          createdAt: "Submitted Date",
+          actions: "Actions",
         },
       },
       authors: {
@@ -308,6 +344,11 @@ export const translations = {
       commentsPlaceholder: "Любая дополнительная информация, которой вы хотели бы поделиться с редакторами",
       cancelButton: "Отмена",
       submitButton: "Отправить статью",
+      submittingButton: "Отправка...",
+      validationError: "Пожалуйста, заполните все обязательные поля",
+      fileRequired: "Пожалуйста, загрузите файл вашей статьи",
+      successMessage: "Ваша статья успешно отправлена!",
+      errorMessage: "Не удалось отправить статью. Пожалуйста, попробуйте еще раз.",
       helpText: "Нужна помощь с отправкой? Свяжитесь с нашей редакционной командой по адресу",
     },
     articles: {
@@ -505,7 +546,7 @@ export const translations = {
     },
     common: {
       submitPaper: "Maqola yuborish",
-      footer: "© 2024 SciPublish. Hamkorlik orqali ilmiy bilimlarni rivojlantirish.",
+      footer: " 2024 SciPublish. Hamkorlik orqali ilmiy bilimlarni rivojlantirish.",
       phoneNumber: "+998 (71) 123-45-67",
     },
     search: {
@@ -516,7 +557,7 @@ export const translations = {
       recentSearches: "So'nggi qidiruv so'rovlari",
     },
     submit: {
-      title: "Ilmiy maqolangizni yuborish",
+      title: "Ilmiy maqolangizni yuboring",
       description: "Ilmiy maqolangizni ko'rib chiqish va nashr etish uchun quyidagi shaklni to'ldiring.",
       formTitle: "Maqola yuborish shakli",
       formDescription: "Iltimos, maqolangiz haqida barcha kerakli ma'lumotlarni taqdim eting.",
@@ -526,7 +567,7 @@ export const translations = {
       authorsPlaceholder: "Mualliflar nomlarini kiriting (vergul bilan ajratilgan)",
       authorsHelp: "Barcha mualliflarni nashrda ko'rinishi kerak bo'lgan tartibda ro'yxatlang.",
       abstractLabel: "Annotatsiya",
-      abstractPlaceholder: "Tadqiqotingizning qisqacha xulosasini taqdim eting (250-300 so'z)",
+      abstractPlaceholder: "Tadqiqotingiz haqida qisqacha ma'lumot bering (250-300 so'z)",
       categoryLabel: "Tadqiqot kategoriyasi",
       categoryPlaceholder: "Kategoriyani tanlang",
       keywordsLabel: "Kalit so'zlar",
@@ -537,9 +578,14 @@ export const translations = {
       fileFormats: "Qabul qilinadigan formatlar: PDF, DOCX (Maksimal hajm: 10MB)",
       browseButton: "Fayllarni ko'rish",
       commentsLabel: "Qo'shimcha izohlar",
-      commentsPlaceholder: "Muharrirlar bilan bo'lishmoqchi bo'lgan qo'shimcha ma'lumotlar",
+      commentsPlaceholder: "Muharrirlar bilan baham ko'rmoqchi bo'lgan har qanday qo'shimcha ma'lumot",
       cancelButton: "Bekor qilish",
       submitButton: "Maqolani yuborish",
+      submittingButton: "Yuborilmoqda...",
+      validationError: "Iltimos, barcha majburiy maydonlarni to'ldiring",
+      fileRequired: "Iltimos, maqola faylini yuklang",
+      successMessage: "Maqolangiz muvaffaqiyatli yuborildi!",
+      errorMessage: "Maqolani yuborishda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
       helpText: "Yuborish bo'yicha yordam kerakmi? Tahririyat jamoamiz bilan bog'laning",
     },
     articles: {
@@ -576,6 +622,7 @@ export const translations = {
         journals: "Jurnallar",
         authors: "Mualliflar",
         resources: "Resurslar",
+        submissions: "Yuborilgan maqolalar",
       },
       stats: {
         articles: "Jami maqolalar",
@@ -657,6 +704,36 @@ export const translations = {
           year: "Yil",
         },
       },
+      submissions: {
+        title: "Yuborilgan maqolalarni boshqarish",
+        viewTitle: "Maqola tafsilotlari",
+        back: "Orqaga",
+        view: "Ko'rish",
+        download: "Yuklab olish",
+        approve: "Tasdiqlash",
+        reject: "Rad etish",
+        resetStatus: "Kutish holatiga qaytarish",
+        statusActive: "Tasdiqlangan",
+        statusInactive: "Rad etilgan",
+        statusPending: "Kutilmoqda",
+        submittedOn: "Yuborilgan sana",
+        authors: "Mualliflar",
+        category: "Kategoriya",
+        keywords: "Kalit so'zlar",
+        abstract: "Annotatsiya",
+        comments: "Qo'shimcha izohlar",
+        file: "Maqola fayli",
+        tableCaption: "Barcha yuborilgan maqolalar ro'yxati",
+        noResults: "Yuborilgan maqolalar topilmadi.",
+        columns: {
+          title: "Sarlavha",
+          authors: "Mualliflar",
+          category: "Kategoriya",
+          status: "Holat",
+          createdAt: "Yuborilgan sana",
+          actions: "Amallar",
+        },
+      },
       authors: {
         title: "Mualliflarni boshqarish",
         create: "Muallif yaratish",
@@ -693,6 +770,84 @@ export const translations = {
   },
 }
 export type Language = keyof typeof translations
-export type Translation = typeof translations.en
+export type AdminSubmissions = {
+  title?: string;
+  viewTitle?: string;
+  back?: string;
+  view?: string;
+  download?: string;
+  approve?: string;
+  reject?: string;
+  resetStatus?: string;
+  statusActive?: string;
+  statusInactive?: string;
+  statusPending?: string;
+  submittedOn?: string;
+  authors?: string;
+  category?: string;
+  keywords?: string;
+  abstract?: string;
+  comments?: string;
+  file?: string;
+  tableCaption?: string;
+  noResults?: string;
+  columns?: {
+    title?: string;
+    authors?: string;
+    category?: string;
+    status?: string;
+    createdAt?: string;
+    actions?: string;
+  };
+}
+
+export type AdminSection = {
+  dashboard: string;
+  sidebar: {
+    dashboard: string;
+    articles: string;
+    journals: string;
+    authors: string;
+    resources: string;
+    submissions: string;
+  };
+  stats: {
+    articles: string;
+    journals: string;
+    authors: string;
+    resources: string;
+  };
+  articles: any;
+  journals: any;
+  resources: any;
+  authors: any;
+  submissions?: AdminSubmissions;
+  login: any;
+}
+
+export type Translation = {
+  navigation: {
+    articles: string;
+    journals: string;
+    authors: string;
+    resources: string;
+  };
+  hero: {
+    title: string;
+    description: string;
+    browseButton: string;
+    submitButton: string;
+  };
+  features: any;
+  video: any;
+  partners: any;
+  common: any;
+  search: any;
+  submit: any;
+  articles: any;
+  authors: any;
+  resources: any;
+  admin: AdminSection;
+}
 export type CreateArticleDialogTranslations = Translation["admin"]["articles"]["create_p"]
 
