@@ -9,6 +9,13 @@ require('dotenv').config()
 const secretKey = process.env.SECRET_KEY; // Replace with a strong secret
 
 export async function registerUser(email: string, name: string, password: string) {
+    // Check if user with this email already exists
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    
+    if (existingUser) {
+        return { success: false, message: "Email already in use" };
+    }
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({

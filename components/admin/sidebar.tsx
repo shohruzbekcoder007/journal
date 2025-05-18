@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, FileText, BookOpen, Users, FolderKanban, Menu } from "lucide-react"
+import { LayoutDashboard, FileText, BookOpen, Users, FolderKanban, Menu, FileUp } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,6 +22,7 @@ interface SidebarProps {
     journals: string
     authors: string
     resources: string
+    submissions?: string
   }
 }
 
@@ -40,6 +41,11 @@ function SidebarNav({ translations, mobile = false }: SidebarProps & { mobile?: 
     //   href: `/${lang}/admin/articles`,
     //   icon: FileText,
     // },
+    {
+      title: translations.submissions || "Submissions",
+      href: `/${lang}/admin/submissions`,
+      icon: FileUp,
+    },
     {
       title: translations.journals,
       href: `/${lang}/admin/journals`,

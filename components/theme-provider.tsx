@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-type Theme = "dark" | "light" | "system"
+type Theme = "light"
 
 type ThemeProviderProps = {
   children: React.ReactNode
@@ -15,34 +15,28 @@ type ThemeProviderState = {
 }
 
 const initialState: ThemeProviderState = {
-  theme: "system",
+  theme: "light",
   setTheme: () => null,
 }
 
 const ThemeContext = React.createContext<ThemeProviderState>(initialState)
 
-export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProviderProps) {
+export function ThemeProvider({ children, defaultTheme = "light" }: ThemeProviderProps) {
   const [theme, setTheme] = React.useState<Theme>(defaultTheme)
 
   React.useEffect(() => {
     const root = window.document.documentElement
-    root.classList.remove("light", "dark")
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-      root.classList.add(systemTheme)
-    } else {
-      root.classList.add(theme)
-    }
+    root.classList.remove("dark")
+    root.classList.add("light")
   }, [theme])
 
   const value = React.useMemo(
     () => ({
       theme,
       setTheme: (theme: Theme) => {
-        setTheme(theme)
+        setTheme("light")
         try {
-          localStorage.setItem("theme", theme)
+          localStorage.setItem("theme", "light")
         } catch (e) {
           // Ignore if localStorage is not available
         }
@@ -58,4 +52,3 @@ export function useTheme() {
   const context = React.useContext(ThemeContext)
   return context
 }
-

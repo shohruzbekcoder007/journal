@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import getUserInfo from "./api/getUserInfo";
+import { getUserInfo } from "@/lib/auth";
 
 // Himoyalangan sahifalar (barcha /admin/* yo'nalishlar)
-// const protectedRoutes = ["/en/admin", "/en/admin/resources", "/en/admin/articles", "/en/admin/journals", "/en/admin/authors"];
-const protectedRoutes = ['/en/admin', '/uz/admin', 'ru/admin'];
+const protectedRoutes = ["/en/admin", "/ru/admin", "/uz/admin", 
+  "/en/admin/resources", "/ru/admin/resources", "/uz/admin/resources", 
+  "/en/admin/articles", "/ru/admin/articles", "/uz/admin/articles", 
+  "/en/admin/journals", "/ru/admin/journals", "/uz/admin/journals", 
+  "/en/admin/authors", "/ru/admin/authors", "/uz/admin/authors"
+];
 
 // Til sozlamalari
 const locales = ["en", "ru", "uz"];
@@ -15,18 +19,27 @@ export async function middleware(req: NextRequest) {
   const authCookie = req.cookies.get("auth")?.value;
 
   // 1. **Himoyalangan sahifalar uchun autentifikatsiya tekshiruvi**
-  if (protectedRoutes.some((route) => pathname.startsWith(route)) && !authCookie) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
+  if (protectedRoutes.some((route) => pathname.startsWith(route))) {
+    // Admin sahifasiga kirmoqchi va token yo'q
+    if (!authCookie) {
+      // Joriy tilni aniqlash
+      const locale = locales.find(locale => pathname.startsWith(`/${locale}/`)) || defaultLocale;
+      return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
+    }
 
-  if (authCookie) {
     try {
+      // Token tekshirish (async funksiya)
       const decoded = await getUserInfo(authCookie);
-      if(!decoded){
-        return NextResponse.redirect(new URL("/login", req.url));
+      if (!decoded) {
+        // Token mavjud, lekin yaroqsiz
+        const locale = locales.find(locale => pathname.startsWith(`/${locale}/`)) || defaultLocale;
+        return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
       }
     } catch (err) {
       console.log('Invalid Token:', err);
+      // Xatolik yuz berganda ham login sahifasiga yo'naltirish
+      const locale = locales.find(locale => pathname.startsWith(`/${locale}/`)) || defaultLocale;
+      return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
     }
   }
 

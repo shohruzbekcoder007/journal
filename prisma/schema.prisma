@@ -19,12 +19,16 @@ model User {
 model File {
   name      String
   path      String
-  createdAt DateTime @default(now())
-  id        Int      @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  id        Int        @id @default(autoincrement())
   Author    Author?
   Journal   Journal?
   Articles  Articles[]
+<<<<<<< HEAD
   AcceptedArticle AcceptedArticle[]
+=======
+  Submission Submission?
+>>>>>>> c81d8241e932c629a205f31741a14d56f54e7439
 }
 
 model Author {
@@ -50,13 +54,13 @@ model Journal {
   frequency   String
   description String
   publisher   String
-  status      status   @default(active)
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  fileId      Int?     @unique
+  status      status     @default(active)
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  fileId      Int?       @unique
   year        Int?
-  file        File?    @relation(fields: [fileId], references: [id])
+  file        File?      @relation(fields: [fileId], references: [id])
   articles    Articles[]
 }
 
@@ -65,11 +69,11 @@ model Articles {
   title       String   @db.VarChar(255)
   description String
   status      status   @default(active)
-  fileId      Int?     
+  fileId      Int?
   file        File?    @relation(fields: [fileId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  author      String   @db.VarChar(255) @unique
+  author      String   @unique @db.VarChar(255)
   journalId   Int
   journal     Journal  @relation(fields: [journalId], references: [id])
 }
@@ -95,4 +99,20 @@ enum status {
   active
   inactive
   pending
+}
+
+
+model Submission {
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(255)
+  authors     String    @db.Text
+  abstract    String    @db.Text
+  category    String    @db.VarChar(100)
+  keywords    String    @db.VarChar(255)
+  fileId      Int?      @unique
+  file        File?     @relation(fields: [fileId], references: [id])
+  comments    String?   @db.Text
+  status      status    @default(pending)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
