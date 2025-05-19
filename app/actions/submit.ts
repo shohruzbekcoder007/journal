@@ -16,8 +16,6 @@ export type Submission = {
   status: "active" | "inactive" | "pending";
   createdAt: Date;
   updatedAt: Date;
-  userId?: number | null;
-  journalId?: number | null;
 };
 
 // Input type for creating submissions
@@ -29,8 +27,6 @@ type SubmissionData = {
   keywords: string;
   fileId?: number;
   comments?: string;
-  userId?: number;
-  journalId?: number;
 };
 
 /**
@@ -38,8 +34,7 @@ type SubmissionData = {
  */
 export async function createSubmission(data: SubmissionData) {
   try {
-    // Use type assertion to work around TypeScript errors until Prisma client is regenerated
-    const submission = await (prisma as any).submission.create({
+    const submission = await prisma.submission.create({
       data: {
         title: data.title,
         authors: data.authors,
@@ -48,8 +43,7 @@ export async function createSubmission(data: SubmissionData) {
         keywords: data.keywords,
         fileId: data.fileId,
         comments: data.comments,
-        userId: data.userId,
-        journalId: data.journalId,
+        status: "pending"
       },
     });
 

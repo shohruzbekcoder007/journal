@@ -24,11 +24,8 @@ model File {
   Author    Author?
   Journal   Journal?
   Articles  Articles[]
-<<<<<<< HEAD
-  AcceptedArticle AcceptedArticle[]
-=======
   Submission Submission?
->>>>>>> c81d8241e932c629a205f31741a14d56f54e7439
+  AcceptedArticle AcceptedArticle?
 }
 
 model Author {
@@ -83,7 +80,7 @@ model AcceptedArticle {
   title       String   @db.VarChar(255)
   description String
   status      status   @default(pending)
-  fileId      Int?     
+  fileId      Int?     @unique
   file        File?    @relation(fields: [fileId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

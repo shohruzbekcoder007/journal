@@ -23,7 +23,9 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
     abstract: "",
     category: "",
     keywords: "",
-    comments: ""
+    comments: "",
+    year: "",
+    month: ""
   })
   const [fileInfo, setFileInfo] = useState<File | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -82,7 +84,15 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
     setUploadProgress(0)
 
     // Validate form data
-    if (!formData.title || !formData.authors || !formData.abstract || !formData.category || !formData.keywords) {
+    if (
+      !formData.title ||
+      !formData.authors ||
+      !formData.abstract ||
+      !formData.category ||
+      !formData.keywords ||
+      !formData.year ||
+      !formData.month
+    ) {
       setErrorMessage(t.submit?.validationError || "Please fill in all required fields")
       setIsSubmitting(false)
       return
@@ -108,7 +118,9 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
         category: formData.category,
         keywords: formData.keywords,
         fileId: fileId || undefined,
-        comments: formData.comments || undefined
+        comments: formData.comments || undefined,
+        year: formData.year,
+        month: formData.month
       })
       
       setUploadProgress(100)
@@ -129,7 +141,9 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
           abstract: "",
           category: "",
           keywords: "",
-          comments: ""
+          comments: "",
+          year: "",
+          month: ""
         })
         setFileInfo(null)
         
@@ -278,7 +292,7 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
               <Label htmlFor="file">
                 {t.submit?.fileLabel || "Paper File"} <span className="text-destructive">*</span>
               </Label>
-              <input type="file" id="file" className="hidden" />
+              <input type="file" id="file" className="hidden" onChange={handleFileChange} />
               <label htmlFor="file" className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition-colors">
                 <FileUpload className="h-10 w-10 text-muted-foreground" />
                 <p className="font-medium">
@@ -287,7 +301,13 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
                 <p className="text-sm text-muted-foreground">
                   {t.submit?.fileFormats || "Accepted formats: PDF, DOCX (Max size: 10MB)"}
                 </p>
-                <Button variant="outline" size="sm" className="mt-2" type="button" onClick={(e) => e.preventDefault()}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-2"
+                  type="button"
+                  onClick={() => document.getElementById('file')?.click()}
+                >
                   <Upload className="mr-2 h-4 w-4" />
                   {t.submit?.browseButton || "Browse Files"}
                 </Button>
@@ -299,7 +319,13 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
               <Label htmlFor="year">
                 {t.submit?.yearLabel || "Year"} <span className="text-destructive">*</span>
               </Label>
-              <Input type="number" id="year" placeholder={t.submit?.yearPlaceholder || "Enter the year of your paper"} />
+              <Input
+                type="number"
+                id="year"
+                value={formData.year}
+                onChange={handleInputChange}
+                placeholder={t.submit?.yearPlaceholder || "Enter the year of your paper"}
+              />
             </div>
 
             {/* Month */}
@@ -307,7 +333,7 @@ export default function SubmitPaperPage({ params: { lang } }: { params: { lang: 
               <Label htmlFor="month">
                 {t.submit?.monthLabel || "Month"} <span className="text-destructive">*</span>
               </Label>
-              <Select>
+              <Select onValueChange={value => setFormData(prev => ({ ...prev, month: value }))} value={formData.month}>
                 <SelectTrigger id="month">
                   <SelectValue placeholder={t.submit?.monthPlaceholder || "Select a month"} />
                 </SelectTrigger>
