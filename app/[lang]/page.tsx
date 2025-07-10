@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button"
 import { BookOpen } from "lucide-react"
-import { translations, type Language } from "@/lib/translations"
 import { YouTubeEmbed } from "@/components/youtube-embed"
 import { PartnersCarousel } from "@/components/partners-carousel"
+import { PDFViewer } from "@/components/pdf-viewer"
+import { ArrowRight } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import { translations, type Language } from "@/lib/translations"
 
 export default function Home({ params: { lang } }: { params: { lang: Language } }) {
   const t = translations[lang]
@@ -60,163 +63,205 @@ export default function Home({ params: { lang } }: { params: { lang: Language } 
     },
   ]
 
+  // Sample journal data for the homepage
+  const featuredJournals = [
+    {
+      id: 1,
+      title: "Marketing jurnal 2023 yil, 4-son",
+      image: "/journals/marketing-1.jpg",
+      url: `/${lang}/journals/1`,
+    },
+    {
+      id: 2,
+      title: "Marketing jurnal 2023 yil, 3-son",
+      image: "/journals/marketing-2.jpg",
+      url: `/${lang}/journals/2`,
+    },
+    {
+      id: 3,
+      title: "Marketing jurnal 2023 yil, 2-son",
+      image: "/journals/marketing-3.jpg",
+      url: `/${lang}/journals/3`,
+    },
+  ]
+
+  // Sample resources data
+  const featuredResources = [
+    {
+      id: 1,
+      title: "Raqamlashtirish va sun'iy intellekt",
+      image: "/resources/resource-1.jpg",
+      url: `/${lang}/resources/1`,
+    },
+    {
+      id: 2,
+      title: "Marketing tadqiqotlari va tahlil",
+      image: "/resources/resource-2.jpg",
+      url: `/${lang}/resources/2`,
+    },
+    {
+      id: 3,
+      title: "Raqamli marketing strategiyalari",
+      image: "/resources/resource-3.jpg",
+      url: `/${lang}/resources/3`,
+    },
+  ]
+
   return (
-    <div>
-      <section className="relative min-h-full">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
+    <div className="bg-white">
+      {/* Hero Section with Marketing Image */}
+      <section className="relative">
+        <div className="w-full h-[400px] relative">
           <Image
-            src="https://cdn.prod.website-files.com/604a97c70aee09eed25ce991/61897a35583a9b51db018d3e_MartinPublicSeating-97560-Importance-School-Library-blogbanner1.jpg"
-            alt="Library background"
+            src="/marketing-hero.jpg"
+            alt="Marketing background"
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
-
-        {/* Hero Content */}
-        <div className="container relative z-10 mx-auto px-4 py-32 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-[64rem] flex flex-col items-center gap-4 text-center">
-            <h1 className="font-bold text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-white">{t?.hero?.title}</h1>
-            <p className="mx-auto max-w-[42rem] leading-normal text-white/80 sm:text-xl sm:leading-8">
-              {t?.hero?.description}
-            </p>
-            <div className="space-x-4 mt-6">
-              <Button size="lg" variant="default" className="bg-primary hover:bg-primary/90">
-                <BookOpen className="mr-2 h-4 w-4" />
-                {t?.hero?.browseButton}
-              </Button>
-              <Button size="lg" variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
-                {t?.hero?.submitButton}
-              </Button>
+          <div className="absolute inset-0 bg-blue-900/60" />
+          <div className="absolute inset-0 flex items-center">
+            <div className="container mx-auto px-4">
+              <div className="max-w-3xl text-white">
+                <h1 className="text-3xl md:text-4xl font-bold mb-4">
+                  {t?.hero?.title || "Ilmiy-tadqiqot, boshqaruv-biznesga yo'naltirilgan ilmiy va ommabop jurnal"}
+                </h1>
+                <p className="text-lg md:text-xl opacity-90 mb-6">
+                  {t?.hero?.description || "Marketing sohasidagi eng so'nggi tadqiqotlar va yangiliklar"}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Curved Bottom */}
-        <div className="absolute bottom-0 left-0 right-0 overflow-hidden">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1400 240"
-            className="w-full h-auto"
-            preserveAspectRatio="none"
-          >
-            <path
-              fill="#ffffff"
-              fillOpacity="1"
-              d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,165.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            ></path>
-          </svg>
         </div>
       </section>
 
-      <div className="container">
-        <main className="flex-1">
-          {/* <section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32">
-          <div className="mx-auto max-w-[64rem] flex flex-col items-center gap-4 text-center">
-            <h1 className="font-bold text-3xl sm:text-5xl md:text-6xl lg:text-7xl">{t?.hero?.title}</h1>
-            <p className="mx-auto max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-              {t?.hero?.description}
-            </p>
-            <div className="space-x-4">
-              <Button size="lg">
-                <BookOpen className="mr-2 h-4 w-4" />
-                {t?.hero?.browseButton}
-              </Button>
-              <Button size="lg" variant="outline">
-                {t?.hero?.submitButton}
-              </Button>
+      {/* Main Content Area */}
+      <div className="container mx-auto px-4 py-8">
+        {/* Category Boxes */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="border border-gray-300 rounded p-6 text-center hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-bold text-blue-800 mb-2">Ilmiy</h3>
+            <p className="text-gray-600">Ilmiy maqolalar va tadqiqotlar</p>
+          </div>
+          <div className="border border-gray-300 rounded p-6 text-center hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-bold text-blue-800 mb-2">Amaliy</h3>
+            <p className="text-gray-600">Amaliy ko'nikmalar va tajribalar</p>
+          </div>
+          <div className="border border-gray-300 rounded p-6 text-center hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-bold text-blue-800 mb-2">Ommabop</h3>
+            <p className="text-gray-600">Ommabop maqolalar va yangiliklar</p>
+          </div>
+        </div>
+
+        {/* Journal Section */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold text-center text-blue-900 mb-8">Yangiliklar</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredJournals.map((journal) => (
+              <div key={journal.id} className="group">
+                <Link href={journal.url} className="block">
+                  <div className="relative h-[280px] mb-3 overflow-hidden">
+                    <Image
+                      src={journal.image}
+                      alt={journal.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <h3 className="text-lg font-bold text-blue-800">{journal.title}</h3>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Eng ko'p o'qilgan maqolalar */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold text-center text-blue-900 mb-8">Eng ko'p o'qilgan maqolalar</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredResources.map((resource) => (
+              <div key={resource.id} className="group">
+                <Link href={resource.url} className="block">
+                  <div className="relative h-[200px] mb-3 overflow-hidden">
+                    <Image
+                      src={resource.image}
+                      alt={resource.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <h3 className="text-lg font-bold text-blue-800">{resource.title}</h3>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Journal Issues Online Section */}
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-8 text-center">{t?.sections?.onlineJournal || "Jurnal sonlarini online ko'rish"}</h2>
+            
+            {/* Journal Issue Selection */}
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <Button variant="default" className="rounded-full">4-son (2023)</Button>
+              <Button variant="outline" className="rounded-full">3-son (2023)</Button>
+              <Button variant="outline" className="rounded-full">2-son (2023)</Button>
+              <Button variant="outline" className="rounded-full">1-son (2023)</Button>
+              <Button variant="outline" className="rounded-full">4-son (2022)</Button>
+            </div>
+            
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="w-full md:w-2/3">
+                <div className="border rounded-lg overflow-hidden bg-white shadow-md">
+                  {/* PDF Viewer Component */}
+                  <div className="pdf-viewer-container">
+                    <PDFViewer pdfUrl="/sample-journal.pdf" initialPage={1} />
+                  </div>
+                  <div className="bg-gray-100 p-4 flex justify-between items-center">
+                    <div className="flex space-x-2">
+                      <button className="w-8 h-8 rounded-full bg-white flex items-center justify-center border">1</button>
+                      <button className="w-8 h-8 rounded-full bg-white flex items-center justify-center border">2</button>
+                      <button className="w-8 h-8 rounded-full bg-white flex items-center justify-center border">3</button>
+                    </div>
+                    <Button variant="default">{t?.sections?.fullView || "To'liq ko'rish"}</Button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Journal Info Sidebar */}
+              <div className="w-full md:w-1/3">
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                  <h3 className="text-xl font-bold mb-4">4-son (2023)</h3>
+                  <div className="mb-4">
+                    <p className="text-gray-700 mb-2"><strong>ISSN:</strong> 2181-9750</p>
+                    <p className="text-gray-700 mb-2"><strong>DOI:</strong> 10.5281/zenodo.7654321</p>
+                    <p className="text-gray-700 mb-2"><strong>Nashr sanasi:</strong> 2023-12-15</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Button variant="outline" className="w-full flex items-center justify-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                      PDF yuklab olish
+                    </Button>
+                    <Button variant="outline" className="w-full flex items-center justify-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </svg>
+                      Havola nusxalash
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </section> */}
-
-          <section className="py-12 md:py-16 bg-muted/30">
-            <div className="container">
-              <div className="mx-auto max-w-[58rem] flex flex-col items-center space-y-4 text-center mb-10">
-                <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-4xl">{t?.video?.title}</h2>
-                <p className="text-muted-foreground text-lg max-w-[42rem]">{t?.video?.description}</p>
-              </div>
-              <div className="mx-auto max-w-4xl">
-                <YouTubeEmbed videoId="dQw4w9WgXcQ" title={t?.video?.videoTitle} className="border border-border" />
-                <div className="mt-4 text-sm text-muted-foreground text-center">{t?.video?.caption}</div>
-              </div>
-            </div>
-          </section>
-
-          <section className="space-y-6 py-8 md:py-12 lg:py-24">
-            <div className="mx-auto max-w-[58rem] flex flex-col items-center space-y-4 text-center">
-              <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-6xl">{t?.features?.title}</h2>
-            </div>
-            <div className="mx-auto max-w-[64rem] grid justify-center gap-4 sm:grid-cols-2 md:grid-cols-3">
-              <div className="relative overflow-hidden rounded-lg border bg-background p-2">
-                <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
-                  <div className="space-y-2">
-                    <h3 className="font-bold">{t?.features?.peerReview?.title}</h3>
-                    <p className="text-sm text-muted-foreground">{t?.features?.peerReview?.description}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="relative overflow-hidden rounded-lg border bg-background p-2">
-                <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
-                  <div className="space-y-2">
-                    <h3 className="font-bold">{t?.features?.citation?.title}</h3>
-                    <p className="text-sm text-muted-foreground">{t?.features?.citation?.description}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="relative overflow-hidden rounded-lg border bg-background p-2">
-                <div className="flex h-[180px] flex-col justify-between rounded-md p-6">
-                  <div className="space-y-2">
-                    <h3 className="font-bold">{t?.features?.analytics?.title}</h3>
-                    <p className="text-sm text-muted-foreground">{t?.features?.analytics?.description}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          
-        </main>
-        
+        </section>
       </div>
-      <section className="py-12 md:py-16 relative">
-            {/* Top Curve */}
-            <div className="absolute top-0 left-0 right-0 overflow-hidden rotate-180">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 1440 320"
-                className="w-full h-auto"
-                preserveAspectRatio="none"
-              >
-                <path
-                  fill="#f3f4f6"
-                  fillOpacity="1"
-                  d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,165.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-                ></path>
-              </svg>
-            </div>
-
-            <div className="container relative z-10">
-              <PartnersCarousel partners={partners} title={t?.partners?.title} description={t?.partners?.description} />
-            </div>
-
-            {/* Bottom Curve */}
-            <div className="absolute bottom-0 left-0 right-0 overflow-hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 1440 320"
-                className="w-full h-auto"
-                preserveAspectRatio="none"
-              >
-                <path
-                  fill="#f3f4f6"
-                  fillOpacity="1"
-                  d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
-                ></path>
-              </svg>
-            </div>
-          </section>
     </div>
   )
 }

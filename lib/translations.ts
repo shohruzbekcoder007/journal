@@ -13,6 +13,12 @@ export const translations = {
       browseButton: "Browse Articles",
       submitButton: "Submit Research",
     },
+    sections: {
+      news: "News",
+      mostRead: "Most read articles",
+      onlineJournal: "View journal issues online",
+      fullView: "Full view"
+    },
     features: {
       title: "Publication Features",
       peerReview: {
@@ -283,6 +289,12 @@ export const translations = {
       browseButton: "Просмотр статей",
       submitButton: "Отправить исследование",
     },
+    sections: {
+      news: "Новости",
+      mostRead: "Самые читаемые статьи",
+      onlineJournal: "Просмотр выпусков журнала онлайн",
+      fullView: "Полный просмотр"
+    },
     features: {
       title: "Особенности публикации",
       peerReview: {
@@ -521,6 +533,12 @@ export const translations = {
         "Ilmiy guruhlar uchun nashr etish, hamkorlik qilish va ilmiy bilimlarni rivojlantirish uchun keng qamrovli platforma. Integratsiyalashgan vositalar va ekspert baholash tizimi yordamida nashr jarayonini optimallashing.",
       browseButton: "Maqolalarni ko'rish",
       submitButton: "Tadqiqot yuborish",
+    },
+    sections: {
+      news: "Yangiliklar",
+      mostRead: "Eng ko'p o'qilgan maqolalar",
+      onlineJournal: "Jurnal sonlarini online ko'rish",
+      fullView: "To'liq ko'rish"
     },
     features: {
       title: "Nashr xususiyatlari",
