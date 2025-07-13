@@ -1,25 +1,71 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
+import dynamic from 'next/dynamic'
 import { ChevronLeft, ChevronRight, Download, ZoomIn, ZoomOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-// Set up the worker for PDF.js
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`
+// Dynamically import react-pdf to avoid SSR issues
+const PDFDocument = dynamic(() => import('react-pdf').then(mod => mod.Document), {
+  ssr: false,
+  loading: () => <div className="h-[600px] w-full flex items-center justify-center">Loading PDF viewer...</div>
+})
+
+const PDFPage = dynamic(() => import('react-pdf').then(mod => mod.Page), {
+  ssr: false
+})
+
+// PDF.js worker will be initialized inside the component
 
 interface PDFViewerProps {
-  pdfUrl: string
+  pdfUrl?: string
   initialPage?: number
   onPageChange?: (page: number) => void
 }
 
 export function PDFViewer({ pdfUrl, initialPage = 1, onPageChange }: PDFViewerProps) {
+  // Use default PDF if none provided
+  const actualPdfUrl = pdfUrl || "/0a502192-903b-45ea-ab8e-014ee8d90a41-Grammar in Use Elm 4-ed.PDF";
+  // Check if we're in browser environment
+  const [isBrowser, setIsBrowser] = useState(false);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
+  
+  // Set isBrowser to true once component mounts (client-side only)
+  useEffect(() => {
+    setIsBrowser(true);
+    
+    // Set up responsive container width
+    const updateWidth = () => {
+      const container = document.getElementById('pdf-container');
+      if (container) {
+        setContainerWidth(container.clientWidth);
+      }
+    };
+    
+    // Initial width calculation
+    updateWidth();
+    
+    // Update width on resize
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
   const [numPages, setNumPages] = useState<number | null>(null)
   const [pageNumber, setPageNumber] = useState<number>(initialPage)
   const [loading, setLoading] = useState<boolean>(true)
   const [scale, setScale] = useState<number>(1.0)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Initialize PDF.js worker only on client side
+    if (isBrowser) {
+      const initPdfWorker = async () => {
+        const pdfjs = await import('react-pdf');
+        pdfjs.pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.pdfjs.version}/build/pdf.worker.min.js`;
+      };
+      
+      initPdfWorker();
+    }
+  }, [isBrowser]);
 
   useEffect(() => {
     // Reset state when PDF URL changes
@@ -67,16 +113,17 @@ export function PDFViewer({ pdfUrl, initialPage = 1, onPageChange }: PDFViewerPr
 
   function downloadPdf() {
     const link = document.createElement('a')
-    link.href = pdfUrl
-    link.download = pdfUrl.split('/').pop() || 'document.pdf'
+    link.href = actualPdfUrl
+    link.download = actualPdfUrl.split('/').pop() || 'document.pdf'
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
   }
 
+  // Only render PDF components in browser environment
   return (
-    <div className="flex flex-col items-center">
-      <div className="relative border rounded-md overflow-hidden bg-white shadow-md">
+    <div className="flex flex-col items-center w-full">
+      <div id="pdf-container" className="relative border rounded-md overflow-hidden bg-white shadow-md w-full">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-80 z-10">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -91,27 +138,30 @@ export function PDFViewer({ pdfUrl, initialPage = 1, onPageChange }: PDFViewerPr
               </Button>
             </div>
           </div>
-        ) : (
-          <Document
-            file={pdfUrl}
+        ) : isBrowser && actualPdfUrl ? (
+          <PDFDocument
+            file={actualPdfUrl}
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadError={onDocumentLoadError}
             loading={<div className="h-[600px] w-full flex items-center justify-center">Loading PDF...</div>}
-            className="max-w-full"
+            className="w-full max-w-full"
+            renderMode="canvas"
           >
-            <Page
+            <PDFPage
               pageNumber={pageNumber}
               renderTextLayer={false}
               renderAnnotationLayer={false}
-              className="max-w-full"
+              className="w-full max-w-full"
               scale={scale}
-              width={600}
+              width={undefined}
             />
-          </Document>
+          </PDFDocument>
+        ) : (
+          <div className="h-[600px] w-full flex items-center justify-center">PDF viewer loading...</div>
         )}
       </div>
 
-      <div className="flex items-center justify-between mt-4 w-full max-w-[600px]">
+      <div className="flex items-center justify-between mt-4 w-full">
         <div className="flex items-center gap-2">
           <Button
             onClick={() => changePage(-1)}
@@ -177,7 +227,7 @@ export function PDFViewer({ pdfUrl, initialPage = 1, onPageChange }: PDFViewerPr
 
       {/* Page thumbnails */}
       {numPages && numPages > 1 && (
-        <div className="flex gap-2 mt-4 overflow-x-auto w-full max-w-[600px] pb-2">
+        <div className="flex gap-2 mt-4 overflow-x-auto w-full pb-2">
           {Array.from(new Array(Math.min(numPages, 10)), (_, index) => (
             <button
               key={index}
