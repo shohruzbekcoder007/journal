@@ -130,7 +130,7 @@ export default async function Home({ params: { lang } }: { params: { lang: Langu
       <section className="relative">
         <div className="w-full h-[400px] relative">
           <Image
-            src={featuredJournals[0]?.image || "https://cdn.prod.website-files.com/604a97c70aee09eed25ce991/61897a35583a9b51db018d3e_MartinPublicSeating-97560-Importance-School-Library-blogbanner1.jpg"}
+            src={"https://cdn.prod.website-files.com/604a97c70aee09eed25ce991/61897a35583a9b51db018d3e_MartinPublicSeating-97560-Importance-School-Library-blogbanner1.jpg"}
             alt="Marketing background"
             fill
             className="object-cover"
