@@ -77,6 +77,14 @@ export type Translation = {
     featuredJournals: string;
     viewAll: string;
   };
+  journal: {
+    journal_info: string;
+    year: string;
+    issue_number: string;
+    issues: string;
+    download: string;
+    view: string;
+  };
   features: any;
   video: any;
   partners: any;

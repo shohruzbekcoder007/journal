@@ -21,6 +21,14 @@ export const translations = {
       featuredJournals: "Featured Journals",
       viewAll: "View All"
     },
+    journal: {
+      journal_info: "Journal Information",
+      year: "Year",
+      issue_number: "Issue Number",
+      issues: "Available Issues",
+      download: "Download PDF",
+      view: "View Online"
+    },
     features: {
       title: "Publication Features",
       peerReview: {
@@ -288,9 +296,9 @@ export const translations = {
       resources: "Ресурсы",
     },
     hero: {
-      title: "Развитие исследований через сотрудничество",
+      title: "Продвижение исследований через сотрудничество",
       description:
-        "Комплексная платформа для исследовательских групп для публикации, сотрудничества и развития научных знаний. Оптимизируйте процесс публикации с помощью наших интегрированных инструментов и системы экспертной оценки.",
+        "Комплексная платформа для исследовательских групп для публикации, сотрудничества и продвижения научных знаний. Оптимизируйте процесс публикации с помощью наших интегрированных инструментов и системы экспертной оценки.",
       browseButton: "Просмотр статей",
       submitButton: "Отправить исследование",
     },
@@ -301,6 +309,14 @@ export const translations = {
       fullView: "Полный просмотр",
       featuredJournals: "Избранные журналы",
       viewAll: "Смотреть все"
+    },
+    journal: {
+      journal_info: "Информация о журнале",
+      year: "Год",
+      issue_number: "Номер выпуска",
+      issues: "Доступные выпуски",
+      download: "Скачать PDF",
+      view: "Смотреть онлайн"
     },
     features: {
       title: "Особенности публикации",
@@ -551,6 +567,14 @@ export const translations = {
       fullView: "To'liq ko'rish",
       featuredJournals: "Tanlangan jurnallar",
       viewAll: "Barchasini ko'rish"
+    },
+    journal: {
+      journal_info: "Jurnal haqida ma'lumot",
+      year: "Yil",
+      issue_number: "Son raqami",
+      issues: "Mavjud sonlar",
+      download: "PDF yuklab olish",
+      view: "Onlayn ko'rish"
     },
     features: {
       title: "Nashr xususiyatlari",

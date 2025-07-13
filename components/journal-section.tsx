@@ -62,8 +62,17 @@ export function JournalSection({ initialJournals, lang, title, viewAllLink, view
                 </h3>
                 <div className="flex justify-between items-center">
                   <div>
-                    <span className="text-sm text-gray-500 mr-2">{journal.year || "2023"}{journal.issue_number ? ` • №${journal.issue_number}` : ""}</span>
-                    <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-sm font-semibold px-2 py-1 bg-blue-600 text-white rounded">
+                        {journal.year || "2023"}
+                      </span>
+                      {journal.issue_number && (
+                        <span className="text-sm font-semibold px-2 py-1 bg-blue-100 text-blue-800 rounded">
+                          {journal.issue_number}-son
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs px-2 py-1 bg-gray-100 text-gray-800 rounded-full">
                       {journal.type}
                     </span>
                   </div>
