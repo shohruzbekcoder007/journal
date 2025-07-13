@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { BookOpen } from "lucide-react"
+import { BookOpen, Download } from "lucide-react"
 import { YouTubeEmbed } from "@/components/youtube-embed"
 import { PartnersCarousel } from "@/components/partners-carousel"
 import { PDFViewer } from "@/components/pdf-viewer"
@@ -7,9 +7,39 @@ import { ArrowRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { translations, type Language } from "@/lib/translations"
+import { listJournals } from "@/app/actions/journal"
+import { JournalSection } from "@/components/journal-section"
 
-export default function Home({ params: { lang } }: { params: { lang: Language } }) {
-  const t = translations[lang]
+// Define the Journal type with file property
+type JournalWithFile = {
+  id: number;
+  title: string;
+  field: string;
+  issn: string;
+  frequency: string;
+  description: string;
+  publisher: string;
+  status: string;
+  type: string;
+  imageUrl: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  year: number | null;
+  issue_number: number | null;
+  file?: {
+    id: number;
+    name: string;
+    path: string;
+  } | null;
+}
+
+export default async function Home({ params: { lang } }: { params: { lang: Language } }) {
+  // Ensure lang is a valid key in translations, default to 'en' if not
+  const validLang = (lang && translations[lang]) ? lang : 'en'
+  const t = translations[validLang]
+  
+  // Fetch journals from the database on the server
+  const journals = await listJournals() as JournalWithFile[]
 
   // Sample partners data - in a real app, this would come from an API or CMS
   const partners = [
@@ -63,27 +93,17 @@ export default function Home({ params: { lang } }: { params: { lang: Language } 
     },
   ]
 
-  // Sample journal data for the homepage
-  const featuredJournals = [
-    {
-      id: 1,
-      title: "Marketing jurnal 2023 yil, 4-son",
-      image: "/journals/marketing-1.jpg",
-      url: `/${lang}/journals/1`,
-    },
-    {
-      id: 2,
-      title: "Marketing jurnal 2023 yil, 3-son",
-      image: "/journals/marketing-2.jpg",
-      url: `/${lang}/journals/2`,
-    },
-    {
-      id: 3,
-      title: "Marketing jurnal 2023 yil, 2-son",
-      image: "/journals/marketing-3.jpg",
-      url: `/${lang}/journals/3`,
-    },
-  ]
+  // Create featured journals from server-side fetched data
+  const featuredJournals = journals.slice(0, 3).map(journal => ({
+    id: journal.id,
+    title: journal.title,
+    image: journal.imageUrl || "/journals/marketing-1.jpg", // Use imageUrl if available, otherwise fallback
+    type: journal.type || "Scientific",
+    url: `/${lang}/journals/${journal.id}`,
+    fileUrl: journal.file?.path || null,
+    year: journal.year,
+    issue_number: journal.issue_number
+  }))
 
   // Sample resources data
   const featuredResources = [
@@ -113,7 +133,7 @@ export default function Home({ params: { lang } }: { params: { lang: Language } 
       <section className="relative">
         <div className="w-full h-[400px] relative">
           <Image
-            src="/marketing-hero.jpg"
+            src={featuredJournals[0]?.image || "https://cdn.prod.website-files.com/604a97c70aee09eed25ce991/61897a35583a9b51db018d3e_MartinPublicSeating-97560-Importance-School-Library-blogbanner1.jpg"}
             alt="Marketing background"
             fill
             className="object-cover"
@@ -153,27 +173,14 @@ export default function Home({ params: { lang } }: { params: { lang: Language } 
           </div>
         </div>
 
-        {/* Journal Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-center text-blue-900 mb-8">Yangiliklar</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredJournals.map((journal) => (
-              <div key={journal.id} className="group">
-                <Link href={journal.url} className="block">
-                  <div className="relative h-[280px] mb-3 overflow-hidden">
-                    <Image
-                      src={journal.image}
-                      alt={journal.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                  <h3 className="text-lg font-bold text-blue-800">{journal.title}</h3>
-                </Link>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Featured Journals Section */}
+        <JournalSection 
+          initialJournals={featuredJournals} 
+          lang={lang} 
+          title={t.sections?.featuredJournals || "Featured Journals"} 
+          viewAllLink={`/${lang}/journals`} 
+          viewAllText={t.sections?.viewAll || "View All"} 
+        />
 
         {/* Eng ko'p o'qilgan maqolalar */}
         <section className="mb-12">

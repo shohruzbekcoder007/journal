@@ -14,15 +14,24 @@ export type Journal = {
     description: string;
     publisher: string;
     status: string;
+    type: string;
+    imageUrl: string | null;
     createdAt: Date;
     updatedAt: Date;
     year: number | null;
+    issue_number: number | null;
 };
 
 enum Status {
     active = "active",
     inactive = "inactive",
     pending = "pending"
+}
+
+enum JournalType {
+    Scientific = "Scientific",
+    Amaliy = "Amaliy",
+    Ommabop = "Ommabop"
 }
 
 export async function createJournal(formData: FormData): Promise<Journal> {
@@ -52,6 +61,9 @@ export async function createJournal(formData: FormData): Promise<Journal> {
 
     const status = formData.get("status") as Status;
 
+    const type = formData.get("type") as JournalType || JournalType.Scientific;
+    const imageUrl = formData.get("imageUrl") as string || null;
+
     return await prisma.journal.create({ data: {
         title: formData.get("title") as string,
         field: formData.get("field") as string,
@@ -60,7 +72,10 @@ export async function createJournal(formData: FormData): Promise<Journal> {
         description: formData.get("description") as string,
         publisher: formData.get("publisher") as string,
         year: parseInt(formData.get("year") as string) || new Date().getFullYear(),
+        issue_number: parseInt(formData.get("issue_number") as string) || 1,
         status,
+        type,
+        imageUrl,
         file: { connect: { id: savedFile.id } },
     } });
 }
@@ -71,7 +86,19 @@ export async function getJournal(id: number): Promise<Journal | null> {
 
 export async function updateJournal(id: number, data: Partial<Omit<Journal, "id" | "createdAt" | "updatedAt">>): Promise<Journal> {
     const status = data.status as Status;
-    return await prisma.journal.update({ where: { id }, data: { ...data, status } });
+    const type = data.type as JournalType;
+    
+    // Create a clean data object with proper types
+    const updateData = {
+        ...data,
+        status: status,
+        type: type
+    };
+    
+    return await prisma.journal.update({ 
+        where: { id }, 
+        data: updateData 
+    });
 }
 
 export async function deleteJournal(id: number): Promise<Journal> {

@@ -46,9 +46,16 @@ const journalSchema = z.object({
   year: z.number().int().min(4, {
     message: "Year must be a 4-digit number.",
   }),
+  issue_number: z.number().int().min(1, {
+    message: "Issue number must be at least 1.",
+  }).optional(),
   status: z.enum(["active", "inactive", "pending"], {
     required_error: "Please select a status.",
   }),
+  type: z.enum(["Scientific", "Amaliy", "Ommabop"], {
+    required_error: "Please select a journal type.",
+  }),
+  imageUrl: z.string().optional(),
   file: z
     .instanceof(FileList)
     .optional()
@@ -79,7 +86,10 @@ const defaultValues: Partial<JournalFormValues> = {
   description: "",
   publisher: "",
   status: "active",
+  type: "Scientific",
+  imageUrl: "",
   year: new Date().getFullYear(),
+  issue_number: 1,
   // file is handled separately since it can't be initialized with a value
 }
 
@@ -305,10 +315,30 @@ export function JournalForm({ lang, initialData }: JournalFormProps) {
             name="year"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Publisher</FormLabel>
+                <FormLabel>Year</FormLabel>
                 <FormControl>
-                  <Input placeholder="Publisher name" {...field} type="number"/>
+                  <Input placeholder="Year" {...field} type="number"/>
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="issue_number"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Issue Number</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="1"
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value) || "")}
+                  />
+                </FormControl>
+                <FormDescription>The issue number of the journal within the year</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -334,6 +364,43 @@ export function JournalForm({ lang, initialData }: JournalFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Journal Type</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select journal type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Scientific">Scientific</SelectItem>
+                    <SelectItem value="Amaliy">Amaliy</SelectItem>
+                    <SelectItem value="Ommabop">Ommabop</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="imageUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cover Image URL</FormLabel>
+                <FormControl>
+                  <Input placeholder="https://example.com/image.jpg" {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

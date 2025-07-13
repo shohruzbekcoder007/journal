@@ -17,7 +17,9 @@ export const translations = {
       news: "News",
       mostRead: "Most read articles",
       onlineJournal: "View journal issues online",
-      fullView: "Full view"
+      fullView: "Full view",
+      featuredJournals: "Featured Journals",
+      viewAll: "View All"
     },
     features: {
       title: "Publication Features",
@@ -105,12 +107,14 @@ export const translations = {
         category: "Category",
         createdAt: "Published Date",
         file: "File",
+        type: "Type",
       },
     },
     journals: {
-      title: "Academic Journals",
+      title: "Journals",
       field: "Field",
-      frequency: "Publication Frequency",
+      frequency: "Frequency",
+      type: "Type",
     },
     authors: {
       title: "Featured Authors",
@@ -205,6 +209,7 @@ export const translations = {
           field: "Field",
           issn: "ISSN",
           frequency: "Frequency",
+          type: "Type",
           status: "Status",
           createdAt: "Created At",
           actions: "Actions",
@@ -293,7 +298,9 @@ export const translations = {
       news: "Новости",
       mostRead: "Самые читаемые статьи",
       onlineJournal: "Просмотр выпусков журнала онлайн",
-      fullView: "Полный просмотр"
+      fullView: "Полный просмотр",
+      featuredJournals: "Избранные журналы",
+      viewAll: "Смотреть все"
     },
     features: {
       title: "Особенности публикации",
@@ -325,7 +332,7 @@ export const translations = {
     },
     common: {
       submitPaper: "Отправить статью",
-      footer: "© 2024 SciPublish. Развитие научных знаний через сотрудничество.",
+      footer: " 2024 SciPublish. Развитие научных знаний через сотрудничество.",
       phoneNumber: "+7 (800) 123-45-67",
     },
     search: {
@@ -381,12 +388,14 @@ export const translations = {
         category: "Категория",
         createdAt: "Дата публикации",
         file: "Файл",
+        type: "Тип",
       },
     },
     journals: {
       title: "Научные журналы",
       field: "Область",
       frequency: "Периодичность публикации",
+      type: "Тип",
     },
     authors: {
       title: "Ведущие авторы",
@@ -480,6 +489,7 @@ export const translations = {
           field: "Область",
           issn: "ISSN",
           frequency: "Периодичность",
+          type: "Тип",
           status: "Статус",
           createdAt: "Дата создания",
           actions: "Действия",
@@ -528,17 +538,19 @@ export const translations = {
       resources: "Resurslar",
     },
     hero: {
-      title: "Hamkorlik orqali tadqiqotlarni rivojlantirish",
+      title: "Hamkorlik orqali ilmiy tadqiqotlarni rivojlantirish",
       description:
-        "Ilmiy guruhlar uchun nashr etish, hamkorlik qilish va ilmiy bilimlarni rivojlantirish uchun keng qamrovli platforma. Integratsiyalashgan vositalar va ekspert baholash tizimi yordamida nashr jarayonini optimallashing.",
+        "Ilmiy jamoalar uchun nashr qilish, hamkorlik qilish va ilmiy bilimlarni rivojlantirish uchun keng qamrovli platforma. Bizning integratsiyalashgan vositalarimiz va ekspert ko'rib chiqish tizimimiz bilan nashr jarayoningizni osonlashtiring.",
       browseButton: "Maqolalarni ko'rish",
       submitButton: "Tadqiqot yuborish",
     },
     sections: {
       news: "Yangiliklar",
       mostRead: "Eng ko'p o'qilgan maqolalar",
-      onlineJournal: "Jurnal sonlarini online ko'rish",
-      fullView: "To'liq ko'rish"
+      onlineJournal: "Jurnal sonlarini onlayn ko'rish",
+      fullView: "To'liq ko'rish",
+      featuredJournals: "Tanlangan jurnallar",
+      viewAll: "Barchasini ko'rish"
     },
     features: {
       title: "Nashr xususiyatlari",
@@ -627,13 +639,15 @@ export const translations = {
         authors: "Mualliflar",
         category: "Kategoriya",
         createdAt: "Nashr sanasi",
-        file: "Fayil"
+        file: "Fayil",
+        type: "Turi",
       },
     },
     journals: {
       title: "Ilmiy jurnallar",
       field: "Soha",
       frequency: "Nashr davriyligi",
+      type: "Turi",
     },
     authors: {
       title: "Taniqli mualliflar",
@@ -868,6 +882,14 @@ export type Translation = {
     browseButton: string;
     submitButton: string;
   };
+  sections: {
+    news: string;
+    mostRead: string;
+    onlineJournal: string;
+    fullView: string;
+    featuredJournals: string;
+    viewAll: string;
+  };
   features: any;
   video: any;
   partners: any;
@@ -875,9 +897,9 @@ export type Translation = {
   search: any;
   submit: any;
   articles: any;
+  journals: any;
   authors: any;
   resources: any;
   admin: AdminSection;
 }
 export type CreateArticleDialogTranslations = Translation["admin"]["articles"]["create_p"]
-

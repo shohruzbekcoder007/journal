@@ -52,6 +52,12 @@ const journalFormSchema = z.object({
   status: z.string({
     required_error: "Please select a status.",
   }),
+  type: z.enum(["Scientific", "Amaliy", "Ommabop"], {
+    required_error: "Please select a journal type.",
+  }),
+  year: z.number().int().min(1900).optional(),
+  issue_number: z.number().int().min(1).optional(),
+  imageUrl: z.string().optional(),
   coverImage: z.any().optional(),
 })
 
@@ -83,6 +89,10 @@ const frequencies = [
 
 const statuses = ["active", "inactive", "draft"] as const
 
+const journalTypes = ["Scientific", "Amaliy", "Ommabop"] as const
+
+type JournalType = "Scientific" | "Amaliy" | "Ommabop";
+
 interface JournalFormEditProps {
   journal: {
     id: string
@@ -92,7 +102,11 @@ interface JournalFormEditProps {
     frequency: string
     description: string
     status: string
+    type?: JournalType
+    imageUrl?: string
     coverImage?: string
+    year?: number
+    issue_number?: number
   }
   translations: {
     title: string
@@ -101,6 +115,8 @@ interface JournalFormEditProps {
     frequency: string
     description: string
     status: string
+    type: string
+    imageUrl: string
     submit: string
     cancel: string
     success: string
@@ -123,6 +139,10 @@ export function JournalFormEdit({ journal, translations }: JournalFormEditProps)
       frequency: journal.frequency,
       description: journal.description,
       status: journal.status,
+      type: (journal.type as JournalType) || "Scientific",
+      imageUrl: journal.imageUrl || "",
+      year: journal.year || new Date().getFullYear(),
+      issue_number: journal.issue_number || 1,
     },
   })
 
@@ -279,6 +299,88 @@ export function JournalFormEdit({ journal, translations }: JournalFormEditProps)
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{translations.type || "Journal Type"}</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select journal type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {journalTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="year"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Year</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="2023"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || "")}
+                      />
+                    </FormControl>
+                    <FormDescription>Publication year</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="issue_number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Issue Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="1"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || "")}
+                      />
+                    </FormControl>
+                    <FormDescription>The issue number of the journal within the year</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{translations.imageUrl || "Cover Image URL"}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://example.com/image.jpg" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    URL to the journal cover image (optional)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
