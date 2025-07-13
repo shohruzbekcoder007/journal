@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { BookOpen, Download } from "lucide-react"
 import { PDFViewer } from "@/components/pdf-viewer"
@@ -6,6 +8,8 @@ import Link from "next/link"
 import { translations, type Language } from "@/lib/translations"
 import { listJournals } from "@/app/actions/journal"
 import { JournalSection } from "@/components/journal-section"
+
+import { useState, useEffect } from "react"
 
 // Define the Journal type with file property
 type JournalWithFile = {
@@ -30,13 +34,35 @@ type JournalWithFile = {
   } | null;
 }
 
-export default async function Home({ params: { lang } }: { params: { lang: Language } }) {
+export default function Home({ params: { lang } }: { params: { lang: Language } }) {
   // Ensure lang is a valid key in translations, default to 'en' if not
   const validLang = (lang && translations[lang]) ? lang : 'en'
   const t = translations[validLang]
   
-  // Fetch journals from the database on the server
-  const journals = await listJournals() as JournalWithFile[]
+  // Client-side state uchun useState hook
+  const [selectedJournalIndex, setSelectedJournalIndex] = useState(0)
+  const [journals, setJournals] = useState<JournalWithFile[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Client-side data fetching
+  useEffect(() => {
+    async function fetchJournals() {
+      try {
+        const response = await fetch('/api/journals')
+        console.log(response, "<--response")
+        if (!response.ok) throw new Error(`Failed to fetch journals: ${response.status}`)
+        const data = await response.json()
+        console.log(data, "<--data")
+        setJournals(data)
+      } catch (err) {
+        console.error('Error fetching journals:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    fetchJournals()
+  }, [])
 
   // Sample partners data - in a real app, this would come from an API or CMS
   const partners = [
@@ -90,17 +116,35 @@ export default async function Home({ params: { lang } }: { params: { lang: Langu
     },
   ]
 
-  // Create featured journals from server-side fetched data
-  const featuredJournals = journals.slice(0, 3).map(journal => ({
-    id: journal.id,
-    title: journal.title,
-    image: journal.imageUrl || "/journals/marketing-1.jpg", // Use imageUrl if available, otherwise fallback
-    type: journal.type || "Scientific",
-    url: `/${lang}/journals/${journal.id}`,
-    fileUrl: journal.file?.path || null,
-    year: journal.year,
-    issue_number: journal.issue_number
-  }))
+  // Client-side state for featured journals
+  const [featuredJournals, setFeaturedJournals] = useState<Array<{
+    id: number;
+    title: string;
+    image: string;
+    type: string;
+    url: string;
+    fileUrl: string | null;
+    year: number | null;
+    issue_number: number | null;
+  }>>([]);
+  
+  // Update featured journals when journals data changes
+  useEffect(() => {
+    if (journals && journals.length > 0) {
+      const featured = journals.slice(0, 3).map(journal => ({
+        id: journal.id,
+        title: journal.title,
+        image: journal.imageUrl || "/journals/marketing-1.jpg", // Use imageUrl if available, otherwise fallback
+        type: journal.type || "Scientific",
+        url: `/${lang}/journals/${journal.id}`,
+        fileUrl: journal.file?.path || null,
+        year: journal.year,
+        issue_number: journal.issue_number
+      }));
+      console.log(featured, "<--featured")
+      setFeaturedJournals(featured);
+    }
+  }, [journals, lang]);
 
   // Sample resources data
   const featuredResources = [
@@ -208,11 +252,22 @@ export default async function Home({ params: { lang } }: { params: { lang: Langu
             
             {/* Journal Issue Selection */}
             <div className="flex flex-wrap justify-center gap-4 mb-8">
-              <Button variant="default" className="rounded-full">4-son (2023)</Button>
-              <Button variant="outline" className="rounded-full">3-son (2023)</Button>
-              <Button variant="outline" className="rounded-full">2-son (2023)</Button>
-              <Button variant="outline" className="rounded-full">1-son (2023)</Button>
-              <Button variant="outline" className="rounded-full">4-son (2022)</Button>
+              {isLoading ? (
+                <div className="text-gray-500">Loading journals...</div>
+              ) : journals && journals.length > 0 ? (
+                journals.map((journal, index) => (
+                  <Button 
+                    key={`${journal.id}`}
+                    variant={index === selectedJournalIndex ? "default" : "outline"} 
+                    className="rounded-full"
+                    onClick={() => setSelectedJournalIndex(index)}
+                  >
+                    {journal.issue_number}-son ({journal.year})
+                  </Button>
+                ))
+              ) : (
+                <div className="text-gray-500">No journals available</div>
+              )}
             </div>
             
             <div className="flex flex-col md:flex-row gap-8">
@@ -220,7 +275,16 @@ export default async function Home({ params: { lang } }: { params: { lang: Langu
                 <div className="border rounded-lg overflow-hidden bg-white shadow-md">
                   {/* PDF Viewer Component */}
                   <div className="pdf-viewer-container">
-                    <PDFViewer pdfUrl="/sample-journal.pdf" initialPage={1} />
+                    {journals && journals.length > 0 ? (
+                      <PDFViewer 
+                        pdfUrl={journals[selectedJournalIndex]?.file?.path || "/sample-journal.pdf"} 
+                        initialPage={1} 
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-[400px] bg-gray-100">
+                        <p className="text-gray-500">No PDF available</p>
+                      </div>
+                    )}
                   </div>
                   <div className="bg-gray-100 p-4 flex justify-between items-center">
                     <div className="flex space-x-2">
@@ -236,7 +300,9 @@ export default async function Home({ params: { lang } }: { params: { lang: Langu
               {/* Journal Info Sidebar */}
               <div className="w-full md:w-1/3">
                 <div className="bg-white p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-bold mb-4">4-son (2023)</h3>
+                  <h3 className="text-xl font-bold mb-4">
+                    {journals[selectedJournalIndex]?.issue_number || 4}-son ({journals[selectedJournalIndex]?.year || 2023})
+                  </h3>
                   <div className="mb-4">
                     <p className="text-gray-700 mb-2"><strong>ISSN:</strong> 2181-9750</p>
                     <p className="text-gray-700 mb-2"><strong>DOI:</strong> 10.5281/zenodo.7654321</p>
